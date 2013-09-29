@@ -41,3 +41,16 @@ func TestOxmRead(t *testing.T) {
 		checkMarshall(t, oxm, expected)
 	}
 }
+
+func TestOxmSize(t *testing.T) {
+	for _, v := range oxms {
+		checkPacketizableSize(t, v.Oxm, len(v.Bytes))
+	}
+}
+
+func TestOxmWrite(t *testing.T) {
+	for _, v := range oxms {
+		empty := reflect.New(reflect.TypeOf(v.Oxm).Elem()).Interface().(Oxm)
+		checkUnmarshal(t, v.Bytes, empty, v.Oxm)
+	}
+}

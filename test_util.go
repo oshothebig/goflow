@@ -2,21 +2,20 @@ package goflow
 
 import (
 	"bytes"
-	"encoding/binary"
 	"io"
 	"reflect"
 	"testing"
 )
 
 func checkPacketizableSize(t *testing.T, p Packetizable, expected int) {
-	data := make([]byte, expected)
-
 	name := reflect.TypeOf(p).Elem().Name()
-	actual := binary.Size(p)
-	if actual != expected {
-		t.Errorf("Size of %s: %d, want %d", name, actual, expected)
+
+	actual := p.Len()
+	if actual != uint(expected) {
+		t.Errorf("%s.Len(): %d, want %d", name, actual, expected)
 	}
 
+	data := make([]byte, expected)
 	n, _ := p.Read(data)
 	if n != expected {
 		t.Errorf("Size of %s (serialized): %d, want %d", name, n, expected)

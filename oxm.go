@@ -304,6 +304,15 @@ func (h *OxmHeader) asUint32() uint32 {
 	return class | field | hasMask | length
 }
 
+func calcOxmLength(bits uint, hasMask bool) uint {
+	unit := alignedSize(bits, 8) / 8
+	if hasMask {
+		return unit * 2
+	} else {
+		return unit
+	}
+}
+
 type OxmPort struct {
 	OxmHeader
 	Value PortNumber
@@ -314,6 +323,10 @@ func newOxmPort(field OxmField, port PortNumber) *OxmPort {
 		*newOxmHeader(field, false, oxmBitsMask[OxmFields.InPort].Bits),
 		port,
 	}
+}
+
+func (o *OxmPort) Len() uint {
+	return o.OxmHeader.Len() + calcOxmLength(oxmBitsMask[OxmFields.InPort].Bits, false)
 }
 
 func (o *OxmPort) Read(b []byte) (n int, err error) {
@@ -344,25 +357,12 @@ func (o *OxmPort) Write(b []byte) (n int, err error) {
 	return
 }
 
-func (o *OxmPort) Len() uint {
-	return o.OxmHeader.Len() + calcOxmLength(oxmBitsMask[OxmFields.InPort].Bits, false)
-}
-
 type OxmInPort struct {
 	OxmPort
 }
 
 func NewOxmInPort(port PortNumber) *OxmInPort {
 	return &OxmInPort{*newOxmPort(OxmFields.InPort, port)}
-}
-
-func calcOxmLength(bits uint, hasMask bool) uint {
-	unit := alignedSize(bits, 8) / 8
-	if hasMask {
-		return unit * 2
-	} else {
-		return unit
-	}
 }
 
 type OxmInPhysicalPort struct {
