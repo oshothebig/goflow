@@ -81,32 +81,12 @@ var ActionTypes = struct {
 
 type Action interface {
 	Packetizable
-	Header() *ActionHeader
-}
-
-type ActionHeader struct {
-	Type   ActionType
-	Length uint16
-}
-
-func (h *ActionHeader) Header() *ActionHeader {
-	return h
-}
-
-func (h *ActionHeader) Read(b []byte) (n int, err error) {
-	return marshal(h, b)
-}
-
-func (h *ActionHeader) Write(b []byte) (n int, err error) {
-	return unmarshalFixedSizeData(h, b)
-}
-
-func (h *ActionHeader) Len() uint {
-	return ActionHeaderLength
+	GetType() ActionType
 }
 
 type SendOutPort struct {
-	ActionHeader
+	Type      ActionType
+	Length    uint16
 	Port      uint32
 	MaxLength uint16
 	_         [6]uint8
@@ -114,9 +94,10 @@ type SendOutPort struct {
 
 func NewSendOutPort(port uint32, length uint16) *SendOutPort {
 	m := &SendOutPort{
-		ActionHeader: ActionHeader{ActionTypes.SendOutPort, SendOutPortLength},
-		Port:         port,
-		MaxLength:    length,
+		Type:      ActionTypes.SendOutPort,
+		Length:    SendOutPortLength,
+		Port:      port,
+		MaxLength: length,
 	}
 
 	return m
@@ -134,13 +115,18 @@ func (a *SendOutPort) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
 }
 
+func (a *SendOutPort) GetType() ActionType {
+	return a.Type
+}
+
 type MinimumActionStruct struct {
-	ActionHeader
-	_ [4]uint8
+	Type   ActionType
+	Length uint16
+	_      [4]uint8
 }
 
 func newMinimumActionStruct(typ ActionType) *MinimumActionStruct {
-	return &MinimumActionStruct{ActionHeader: ActionHeader{typ, MinimumActionLength}}
+	return &MinimumActionStruct{Type: typ, Length: MinimumActionLength}
 }
 
 func (a *MinimumActionStruct) Len() uint {
@@ -153,6 +139,10 @@ func (a *MinimumActionStruct) Read(b []byte) (n int, err error) {
 
 func (a *MinimumActionStruct) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
+}
+
+func (a *MinimumActionStruct) GetType() ActionType {
+	return a.Type
 }
 
 type CopyTtlOut struct {
@@ -172,9 +162,10 @@ func NewCopyTtlIn() *CopyTtlIn {
 }
 
 type SetMplsTtl struct {
-	ActionHeader
-	TTL uint8
-	_   [3]uint8
+	Type   ActionType
+	Length uint16
+	TTL    uint8
+	_      [3]uint8
 }
 
 func (a *SetMplsTtl) Len() uint {
@@ -189,10 +180,15 @@ func (a *SetMplsTtl) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
 }
 
+func (a *SetMplsTtl) GetType() ActionType {
+	return a.Type
+}
+
 func NewSetMplsTtl(ttl uint8) *SetMplsTtl {
 	return &SetMplsTtl{
-		ActionHeader: ActionHeader{ActionTypes.SetMplsTtl, MinimumActionLength},
-		TTL:          ttl,
+		Type:   ActionTypes.SetMplsTtl,
+		Length: MinimumActionLength,
+		TTL:    ttl,
 	}
 }
 
@@ -205,15 +201,17 @@ func NewDecrMplsTtl() *DecrMplsTtl {
 }
 
 type PushAction struct {
-	ActionHeader
+	Type      ActionType
+	Length    uint16
 	EtherType uint16
 	_         [2]uint8
 }
 
 func newPushAction(at ActionType, et uint16) *PushAction {
 	return &PushAction{
-		ActionHeader: ActionHeader{at, MinimumActionLength},
-		EtherType:    et,
+		Type:      at,
+		Length:    MinimumActionLength,
+		EtherType: et,
 	}
 }
 
@@ -227,6 +225,10 @@ func (a *PushAction) Read(b []byte) (n int, err error) {
 
 func (a *PushAction) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
+}
+
+func (a *PushAction) GetType() ActionType {
+	return a.Type
 }
 
 type PushVlan struct {
@@ -254,15 +256,17 @@ func NewPushMpls(t uint16) *PushMpls {
 }
 
 type PopMpls struct {
-	ActionHeader
+	Type      ActionType
+	Length    uint16
 	EtherType uint16
 	_         [2]uint8
 }
 
 func NewPopMpls(t uint16) *PopMpls {
 	return &PopMpls{
-		ActionHeader: ActionHeader{ActionTypes.PopMpls, MinimumActionLength},
-		EtherType:    t,
+		Type:      ActionTypes.PopMpls,
+		Length:    MinimumActionLength,
+		EtherType: t,
 	}
 }
 
@@ -278,15 +282,21 @@ func (a *PopMpls) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
 }
 
+func (a *PopMpls) GetType() ActionType {
+	return a.Type
+}
+
 type SetQueue struct {
-	ActionHeader
+	Type    ActionType
+	Length  uint16
 	QueueId uint32
 }
 
 func NewSetQueue(id uint32) *SetQueue {
 	return &SetQueue{
-		ActionHeader{ActionTypes.SetQueue, MinimumActionLength},
-		id,
+		Type:    ActionTypes.SetQueue,
+		Length:  MinimumActionLength,
+		QueueId: id,
 	}
 }
 
@@ -302,15 +312,21 @@ func (a *SetQueue) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
 }
 
+func (a *SetQueue) GetType() ActionType {
+	return a.Type
+}
+
 type GroupAction struct {
-	ActionHeader
+	Type    ActionType
+	Length  uint16
 	GroupId uint32
 }
 
 func NewGroupAction(id uint32) *GroupAction {
 	return &GroupAction{
-		ActionHeader{ActionTypes.GroupAction, 8},
-		id,
+		Type:    ActionTypes.GroupAction,
+		Length:  8,
+		GroupId: id,
 	}
 }
 
@@ -326,16 +342,22 @@ func (a *GroupAction) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
 }
 
+func (a *GroupAction) GetType() ActionType {
+	return a.Type
+}
+
 type SetIpTtl struct {
-	ActionHeader
-	TTL uint8
-	_   [3]uint8
+	Type   ActionType
+	Length uint16
+	TTL    uint8
+	_      [3]uint8
 }
 
 func NewSetIpTtl(ttl uint8) *SetIpTtl {
 	return &SetIpTtl{
-		ActionHeader: ActionHeader{ActionTypes.SetIpTtl, MinimumActionLength},
-		TTL:          ttl,
+		Type:   ActionTypes.SetIpTtl,
+		Length: MinimumActionLength,
+		TTL:    ttl,
 	}
 }
 
@@ -351,6 +373,10 @@ func (a *SetIpTtl) Write(b []byte) (n int, err error) {
 	return unmarshalFixedSizeData(a, b)
 }
 
+func (a *SetIpTtl) GetType() ActionType {
+	return a.Type
+}
+
 type DecrIpTtl struct {
 	MinimumActionStruct
 }
@@ -360,15 +386,17 @@ func NewDecrIpTtl() *DecrIpTtl {
 }
 
 type SetField struct {
-	ActionHeader
+	Type   ActionType
+	Length uint16
+
 	Field Oxm
 	pad   []uint8
 }
 
 func NewSetField(o Oxm) *SetField {
 	s := &SetField{
-		ActionHeader: ActionHeader{Type: ActionTypes.SetField},
-		Field:        o,
+		Type:  ActionTypes.SetField,
+		Field: o,
 	}
 	s.Length = uint16(s.Len())
 	s.pad = make([]uint8, s.Len()-ActionHeaderLength-s.Field.Len())
@@ -383,7 +411,10 @@ func (a *SetField) Len() uint {
 
 func (a *SetField) Read(b []byte) (n int, err error) {
 	buf := new(bytes.Buffer)
-	if err = binary.Write(buf, binary.BigEndian, a.ActionHeader); err != nil {
+	if err = binary.Write(buf, binary.BigEndian, a.Type); err != nil {
+		return
+	}
+	if err = binary.Write(buf, binary.BigEndian, a.Length); err != nil {
 		return
 	}
 	if _, err = buf.ReadFrom(a.Field); err != nil {
@@ -397,6 +428,10 @@ func (a *SetField) Read(b []byte) (n int, err error) {
 		return
 	}
 	return n, io.EOF
+}
+
+func (a *SetField) GetType() ActionType {
+	return a.Type
 }
 
 type PushPbb struct {
@@ -416,6 +451,7 @@ func NewPopPbb() *PopPbb {
 }
 
 type ExperimenterActionHeader struct {
-	ActionHeader
+	Type         ActionType
+	Length       uint16
 	Experimenter uint32
 }
