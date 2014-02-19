@@ -108,7 +108,7 @@ func (a *SendOutPort) Len() uint {
 }
 
 func (a *SendOutPort) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *SendOutPort) Write(b []byte) (n int, err error) {
@@ -134,7 +134,7 @@ func (a *MinimumActionStruct) Len() uint {
 }
 
 func (a *MinimumActionStruct) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *MinimumActionStruct) Write(b []byte) (n int, err error) {
@@ -173,7 +173,7 @@ func (a *SetMplsTtl) Len() uint {
 }
 
 func (a *SetMplsTtl) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *SetMplsTtl) Write(b []byte) (n int, err error) {
@@ -220,7 +220,7 @@ func (a *PushAction) Len() uint {
 }
 
 func (a *PushAction) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *PushAction) Write(b []byte) (n int, err error) {
@@ -275,7 +275,7 @@ func (a *PopMpls) Len() uint {
 }
 
 func (a *PopMpls) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *PopMpls) Write(b []byte) (n int, err error) {
@@ -305,7 +305,7 @@ func (a *SetQueue) Len() uint {
 }
 
 func (a *SetQueue) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *SetQueue) Write(b []byte) (n int, err error) {
@@ -335,7 +335,7 @@ func (a *GroupAction) Len() uint {
 }
 
 func (a *GroupAction) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *GroupAction) Write(b []byte) (n int, err error) {
@@ -366,7 +366,7 @@ func (a *SetIpTtl) Len() uint {
 }
 
 func (a *SetIpTtl) Read(b []byte) (n int, err error) {
-	return marshal(a, b)
+	return marshalFixedSizeData(a, b)
 }
 
 func (a *SetIpTtl) Write(b []byte) (n int, err error) {
