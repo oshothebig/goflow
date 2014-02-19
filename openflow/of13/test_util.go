@@ -6,6 +6,8 @@ import (
 	"io"
 	"reflect"
 	"testing"
+
+	. "github.com/oshothebig/goflow/openflow"
 )
 
 func checkPacketizableSize(t *testing.T, p Packetizable, expected int) {

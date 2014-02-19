@@ -1,5 +1,7 @@
 package of13
 
+import . "github.com/oshothebig/goflow/openflow"
+
 type ErrorType uint16
 type ErrorCode uint16
 

@@ -1,30 +1,9 @@
 package of13
 
-import "io"
+import . "github.com/oshothebig/goflow/openflow"
 
 const WireProtocolVersion = 0x04
 const MinimumHeaderLength = 8
-
-type Packetizable interface {
-	io.ReadWriter
-	Len() uint
-}
-
-type Message interface {
-	Packetizable
-	Header() *Header
-}
-
-type Header struct {
-	Version uint8
-	Type    MessageType
-	Length  uint16
-	Xid     uint32
-}
-
-func (h *Header) Header() *Header {
-	return h
-}
 
 func NewHeader(typ MessageType) *Header {
 	h := new(Header)
@@ -35,18 +14,6 @@ func NewHeader(typ MessageType) *Header {
 
 	return h
 }
-
-func newXidGenerator() func() uint32 {
-	var xid uint32 = 0
-	return func() uint32 {
-		xid += 1
-		return xid
-	}
-}
-
-var generateXid func() uint32 = newXidGenerator()
-
-type MessageType uint8
 
 const (
 	OFPT_HELLO MessageType = iota
@@ -144,6 +111,8 @@ var MessageTypes = struct {
 	OFPT_SET_ASYNC,
 	OFPT_METER_MOD,
 }
+
+var generateXid func() uint32 = NewXidGenerator()
 
 type Cookie uint64
 type CookieMask uint64

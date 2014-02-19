@@ -1,6 +1,10 @@
 package of13
 
-import "net"
+import (
+	"net"
+
+	. "github.com/oshothebig/goflow/openflow"
+)
 
 type Hello struct {
 	Header

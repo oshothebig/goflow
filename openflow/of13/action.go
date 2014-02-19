@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
+
+	. "github.com/oshothebig/goflow/openflow"
 )
 
 const (

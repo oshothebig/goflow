@@ -5,6 +5,8 @@ import (
 	"encoding/binary"
 	"io"
 	"net"
+
+	. "github.com/oshothebig/goflow/openflow"
 )
 
 type EtherType uint16
