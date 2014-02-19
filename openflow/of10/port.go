@@ -1,10 +1,6 @@
 package of10
 
-import (
-	"net"
-
-	. "github.com/oshothebig/goflow/openflow"
-)
+import "net"
 
 const MaxPortNameLength = 16
 
