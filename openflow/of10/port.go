@@ -24,3 +24,31 @@ type PhysicalPort struct {
 	SupportedFeatures  PortFeature
 	PeerFeatures       PortFeature
 }
+
+const (
+	OFPPC_PORT_DOWN PortConfig = 1 << iota
+	OFPPC_NO_STP
+	OFPPC_NO_RECV
+	OFPPC_NO_RECV_STP
+	OFPPC_NO_FLOOD
+	OFPPC_NO_FWD
+	OFPPC_NO_PACKET_IN
+)
+
+var PortConfigs = struct {
+	PortDown     PortConfig
+	NoStp        PortConfig
+	NoReceive    PortConfig
+	NoReceiveStp PortConfig
+	NoFlood      PortConfig
+	NoForward    PortConfig
+	NoPacketIn   PortConfig
+}{
+	OFPPC_PORT_DOWN,
+	OFPPC_NO_STP,
+	OFPPC_NO_RECV,
+	OFPPC_NO_RECV_STP,
+	OFPPC_NO_FLOOD,
+	OFPPC_NO_FWD,
+	OFPPC_NO_PACKET_IN,
+}
