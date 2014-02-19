@@ -2,6 +2,8 @@ package openflow
 
 import "io"
 
+const MinimumHeaderLength = 8
+
 type Packetizable interface {
 	io.ReadWriter
 	Len() uint

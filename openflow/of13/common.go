@@ -3,7 +3,6 @@ package of13
 import . "github.com/oshothebig/goflow/openflow"
 
 const WireProtocolVersion = 0x04
-const MinimumHeaderLength = 8
 
 func NewHeader(typ MessageType) *Header {
 	h := new(Header)
