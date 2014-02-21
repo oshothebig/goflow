@@ -60,3 +60,7 @@ type ActionHeader struct {
 	Length uint16
 	pad    [4]uint8
 }
+
+func (header *ActionHeader) GetType() ActionType {
+	return header.Type
+}
