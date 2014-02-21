@@ -1,5 +1,7 @@
 package of10
 
+import . "github.com/oshothebig/goflow/openflow"
+
 type ActionType uint16
 
 const (
@@ -46,4 +48,15 @@ var ActionTypes = struct {
 	OFPAT_SET_TP_DST,
 	OFPAT_ENQUEUE,
 	OFPAT_VENDOR,
+}
+
+type Action interface {
+	Packetizable
+	GetType() ActionType
+}
+
+type ActionHeader struct {
+	Type   ActionType
+	Length uint16
+	pad    [4]uint8
 }
