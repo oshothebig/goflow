@@ -58,9 +58,14 @@ type Action interface {
 type ActionHeader struct {
 	Type   ActionType
 	Length uint16
-	pad    [4]uint8
 }
 
 func (header *ActionHeader) GetType() ActionType {
 	return header.Type
+}
+
+type SendOutPort struct {
+	ActionHeader
+	Port PortNumber
+	MaxLength uint16
 }
