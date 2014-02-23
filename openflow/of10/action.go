@@ -76,3 +76,9 @@ type Enqueue struct {
 	pad     [6]uint8
 	QueueId uint32
 }
+
+type SetVlanVid struct {
+	ActionHeader
+	VlanId VlanId
+	pad    [2]uint32
+}
