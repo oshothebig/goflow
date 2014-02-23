@@ -1,6 +1,10 @@
 package of10
 
-import . "github.com/oshothebig/goflow/openflow"
+import (
+	"net"
+
+	. "github.com/oshothebig/goflow/openflow"
+)
 
 type ActionType uint16
 
@@ -87,4 +91,10 @@ type SetVlanPcp struct {
 	ActionHeader
 	VlanPcp VlanPriority
 	pad     [3]uint8
+}
+
+type SetEtherAddress struct {
+	ActionHeader
+	EtherAddress net.HardwareAddr
+	pad          [6]uint8
 }
