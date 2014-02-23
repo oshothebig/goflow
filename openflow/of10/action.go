@@ -82,3 +82,9 @@ type SetVlanVid struct {
 	VlanId VlanId
 	pad    [2]uint32
 }
+
+type SetVlanPcp struct {
+	ActionHeader
+	VlanPcp VlanPriority
+	pad     [3]uint8
+}
