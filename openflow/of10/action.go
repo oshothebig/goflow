@@ -66,6 +66,13 @@ func (header *ActionHeader) GetType() ActionType {
 
 type SendOutPort struct {
 	ActionHeader
-	Port PortNumber
+	Port      PortNumber
 	MaxLength uint16
+}
+
+type Enqueue struct {
+	ActionHeader
+	Port    PortNumber
+	pad     [6]uint8
+	QueueId uint32
 }
