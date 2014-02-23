@@ -98,3 +98,14 @@ type SetEtherAddress struct {
 	EtherAddress net.HardwareAddr
 	pad          [6]uint8
 }
+
+type SetIpAddress struct {
+	ActionHeader
+	IpAddress net.IP
+}
+
+type SetIpTos struct {
+	ActionHeader
+	IpTos Dscp
+	pad   [3]uint8
+}
