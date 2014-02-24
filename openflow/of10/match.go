@@ -16,8 +16,8 @@ type Match struct {
 	pad2         [2]uint8
 	IpSrc        net.IP
 	IpDst        net.IP
-	NetworkSrc   NetworkPort
-	NetworkDst   NetworkPort
+	TransportSrc TransportPort
+	TransportDst TransportPort
 }
 
 type Wildcard uint32
@@ -26,7 +26,7 @@ type VlanPriority uint8
 type EtherType uint16
 type Dscp uint8
 type ProtocolNumber uint8
-type NetworkPort uint16
+type TransportPort uint16
 
 const (
 	OFPFW_IN_PORT Wildcard = 1 << iota

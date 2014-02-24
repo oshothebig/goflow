@@ -112,7 +112,7 @@ type SetIpTos struct {
 
 type SetTransportPort struct {
 	ActionHeader
-	Port NetworkPort
+	Port TransportPort
 	pad  [2]uint8
 }
 
