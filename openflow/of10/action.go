@@ -83,37 +83,37 @@ type Enqueue struct {
 
 type SetVlanVid struct {
 	ActionHeader
-	VlanId VlanId
-	pad    [2]uint32
+	Id  VlanId
+	pad [2]uint32
 }
 
 type SetVlanPcp struct {
 	ActionHeader
-	VlanPcp VlanPriority
-	pad     [3]uint8
+	Priority VlanPriority
+	pad      [3]uint8
 }
 
 type SetEtherAddress struct {
 	ActionHeader
-	EtherAddress net.HardwareAddr
-	pad          [6]uint8
+	Address net.HardwareAddr
+	pad     [6]uint8
 }
 
 type SetIpAddress struct {
 	ActionHeader
-	IpAddress net.IP
+	Address net.IP
 }
 
 type SetIpTos struct {
 	ActionHeader
-	IpTos Dscp
-	pad   [3]uint8
+	Tos Dscp
+	pad [3]uint8
 }
 
 type SetTransportPort struct {
 	ActionHeader
-	TransportPort NetworkPort
-	pad           [2]uint8
+	Port NetworkPort
+	pad  [2]uint8
 }
 
 type VendorHeader struct {
