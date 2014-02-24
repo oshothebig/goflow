@@ -109,3 +109,16 @@ type SetIpTos struct {
 	IpTos Dscp
 	pad   [3]uint8
 }
+
+type SetTransportPort struct {
+	ActionHeader
+	TransportPort NetworkPort
+	pad           [2]uint8
+}
+
+type VendorHeader struct {
+	ActionHeader
+	Vendor VendorId
+}
+
+type VendorId uint32
