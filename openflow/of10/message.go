@@ -50,3 +50,30 @@ var Capabilities = struct {
 	OFPC_QUEUE_STATS,
 	OFPC_ARP_MATCH_IP,
 }
+
+type SwitchConfig struct {
+	Header
+	Flags          ConfigFlag
+	MissSendLength uint16
+}
+
+type ConfigFlag uint16
+
+const (
+	OFPC_FRAG_NORMAL ConfigFlag = iota
+	OFPC_FRAG_DROP
+	OFPC_FRAG_REASM
+	OFPC_FRAG_MASK
+)
+
+var ConfigFlags = struct {
+	FragmentNormal     ConfigFlag
+	FragmentDrop       ConfigFlag
+	FragmentReassemble ConfigFlag
+	FragmentMask       ConfigFlag
+}{
+	OFPC_FRAG_NORMAL,
+	OFPC_FRAG_DROP,
+	OFPC_FRAG_REASM,
+	OFPC_FRAG_MASK,
+}
