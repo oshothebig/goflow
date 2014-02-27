@@ -205,3 +205,97 @@ var StatsTypes = struct {
 	OFPST_QUEUE,
 	OFPST_VENDOR,
 }
+
+type DescriptionStats struct {
+	Manufacturer []uint8
+	Hardware     []uint8
+	Software     []uint8
+	SerialNumber []uint8
+	Datapath     []uint8
+}
+
+type FlowStatsRequest struct {
+	Match   Match
+	TalbeId uint8
+	pad     uint8
+	OutPort PortNumber
+}
+
+type FlowStatsReply struct {
+	Length          uint16
+	TableId         uint8
+	pad             [1]uint8
+	Match           Match
+	DurationSec     uint32
+	DurationNanoSec uint32
+	Priority        uint16
+	IdleTimeout     uint16
+	HardTimeout     uint16
+	pad2            [6]uint8
+	Cookie          Cookie
+	PacketCount     uint64
+	ByteCount       uint64
+	Actions         []ActionHeader
+}
+
+type AggregateStatsRequest struct {
+	Match   Match
+	TableId uint8
+	pad     [1]uint8
+	OutPort PortNumber
+}
+
+type AggregateStatsReply struct {
+	PacketCount uint64
+	ByteCount   uint64
+	FlowCount   uint64
+	pad         [4]uint8
+}
+
+type TableStatsReply struct {
+	TableId      uint8
+	pad          [3]uint8
+	Name         []uint8
+	Wildcards    Wildcard
+	MaxEntries   uint32
+	ActiveCount  uint32
+	LookupCount  uint32
+	MatchedCount uint32
+}
+
+type PortStatsRequest struct {
+	PortNumber PortNumber
+	pad        [6]uint8
+}
+
+type PortStatsReply struct {
+	PortNumber      PortNumber
+	pad             [6]uint8
+	RxPackets       uint64
+	TxPackets       uint64
+	RxBytes         uint64
+	TxBytes         uint64
+	RxDropped       uint64
+	TxDropped       uint64
+	RxErrors        uint64
+	TxErrors        uint64
+	RxFrameErrors   uint64
+	RxOverrunErrors uint64
+	RxCrcErrors     uint64
+	Collisions      uint64
+}
+
+type QueueStatsRequest struct {
+	PortNumber PortNumber
+	pad        [2]uint8
+	QueueId    uint32
+}
+
+type QueueStatsReply struct {
+	PortNumber PortNumber
+	pad        [2]uint8
+	QueueId    uint32
+	TxBytes    uint64
+	TxPackets  uint64
+	TxErrors   uint64
+}
