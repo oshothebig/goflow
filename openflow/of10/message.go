@@ -161,3 +161,47 @@ type QueueGetConfigReply struct {
 	pad    [6]uint8
 	Queues []PacketQueue
 }
+
+type StatsRequest struct {
+	Header
+	Type  StatsType
+	Flags uint16
+	Body  []uint8
+}
+
+type StatsReply struct {
+	Header
+	Type  StatsType
+	Flags uint16
+	Body  []uint8
+}
+
+type StatsType uint16
+
+const (
+	OFPST_DESC StatsType = iota
+	OFPST_FLOW
+	OFPST_AGGREGATE
+	OFPST_TABLE
+	OFPST_PORT
+	OFPST_QUEUE
+	OFPST_VENDOR StatsType = 0xffff
+)
+
+var StatsTypes = struct {
+	Description StatsType
+	Flow        StatsType
+	Aggregate   StatsType
+	Table       StatsType
+	Port        StatsType
+	Queue       StatsType
+	Vendor      StatsType
+}{
+	OFPST_DESC,
+	OFPST_FLOW,
+	OFPST_AGGREGATE,
+	OFPST_TABLE,
+	OFPST_PORT,
+	OFPST_QUEUE,
+	OFPST_VENDOR,
+}
