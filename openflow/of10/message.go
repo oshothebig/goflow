@@ -148,3 +148,16 @@ type PortMod struct {
 	Advertise       PortFeature
 	pad             [4]uint8
 }
+
+type QueueGetConfigRequest struct {
+	Header
+	Port PortNumber
+	pad  [2]uint8
+}
+
+type QueueGetConfigReply struct {
+	Header
+	Port   PortNumber
+	pad    [6]uint8
+	Queues []PacketQueue
+}
