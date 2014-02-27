@@ -1,6 +1,10 @@
 package of10
 
-import . "github.com/oshothebig/goflow/openflow"
+import (
+	"net"
+
+	. "github.com/oshothebig/goflow/openflow"
+)
 
 type FeaturesRequest struct {
 	Header
@@ -133,4 +137,14 @@ var FlowModFlags = struct {
 	OFPFF_SEND_FLOW_REM,
 	OFPFF_CHECK_OVERLAP,
 	OFPFF_EMERG,
+}
+
+type PortMod struct {
+	Header
+	PortNumber      PortNumber
+	HardwareAddress net.HardwareAddr
+	Config          PortConfig
+	Mask            PortConfig
+	Advertise       PortFeature
+	pad             [4]uint8
 }
