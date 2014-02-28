@@ -374,3 +374,28 @@ var FlowRemovedReasons = struct {
 	OFPRR_HARD_TIMEOUT,
 	OFPRR_DELETE,
 }
+
+type PortStatus struct {
+	Header
+	Reason      PortStatusReason
+	pad         [7]uint8
+	Description PhysicalPort
+}
+
+type PortStatusReason uint8
+
+const (
+	OFPPR_ADD PortStatusReason = iota
+	OFPPR_DELETE
+	OFPPR_MODIFY
+)
+
+var PortStatusReasons = struct {
+	Add    PortStatusReason
+	Delete PortStatusReason
+	Modify PortStatusReason
+}{
+	OFPPR_ADD,
+	OFPPR_DELETE,
+	OFPPR_MODIFY,
+}
