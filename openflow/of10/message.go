@@ -341,3 +341,18 @@ var PacketInReasons = struct {
 	OFPR_NO_MATCH,
 	OFPR_ACTION,
 }
+
+type FlowRemoved struct {
+	Header
+	Match           Match
+	Cookie          Cookie
+	Priority        uint16
+	Reason          PacketInReason
+	pad             [1]uint8
+	DurationSec     uint32
+	DurationNanoSec uint32
+	IdleTimeout     uint16
+	pad2            [2]uint8
+	PacketCount     uint64
+	ByteCount       uint64
+}
