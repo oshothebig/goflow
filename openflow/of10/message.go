@@ -299,3 +299,12 @@ type QueueStatsReply struct {
 	TxPackets  uint64
 	TxErrors   uint64
 }
+
+type PacketOut struct {
+	Header
+	BufferId      uint32
+	InPort        PortNumber
+	ActionsLength uint16
+	Actions       []ActionHeader
+	Data          []uint8
+}
