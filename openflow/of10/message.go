@@ -308,3 +308,11 @@ type PacketOut struct {
 	Actions       []ActionHeader
 	Data          []uint8
 }
+
+type BarrierRequest struct {
+	Header
+}
+
+type BarrierReply struct {
+	Header
+}
