@@ -347,7 +347,7 @@ type FlowRemoved struct {
 	Match           Match
 	Cookie          Cookie
 	Priority        uint16
-	Reason          PacketInReason
+	Reason          FlowRemovedReason
 	pad             [1]uint8
 	DurationSec     uint32
 	DurationNanoSec uint32
@@ -355,4 +355,22 @@ type FlowRemoved struct {
 	pad2            [2]uint8
 	PacketCount     uint64
 	ByteCount       uint64
+}
+
+type FlowRemovedReason uint8
+
+const (
+	OFPRR_IDLE_TIMEOUT FlowRemovedReason = iota
+	OFPRR_HARD_TIMEOUT
+	OFPRR_DELETE
+)
+
+var FlowRemovedReasons = struct {
+	IdleTimeout FlowRemovedReason
+	HardTimeout FlowRemovedReason
+	Delete      FlowRemovedReason
+}{
+	OFPRR_IDLE_TIMEOUT,
+	OFPRR_HARD_TIMEOUT,
+	OFPRR_DELETE,
 }
