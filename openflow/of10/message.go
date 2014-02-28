@@ -316,3 +316,28 @@ type BarrierRequest struct {
 type BarrierReply struct {
 	Header
 }
+
+type PacketIn struct {
+	Header
+	BufferId    uint32
+	TotalLength uint16
+	InPort      PortNumber
+	Reason      PacketInReason
+	pad         [1]uint8
+	Data        []uint8
+}
+
+type PacketInReason uint8
+
+const (
+	OFPR_NO_MATCH PacketInReason = iota
+	OFPR_ACTION
+)
+
+var PacketInReasons = struct {
+	NoMatch PacketInReason
+	Action  PacketInReason
+}{
+	OFPR_NO_MATCH,
+	OFPR_ACTION,
+}
