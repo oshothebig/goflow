@@ -116,7 +116,7 @@ type SetTransportPort struct {
 	pad  [2]uint8
 }
 
-type VendorHeader struct {
+type VendorActionHeader struct {
 	ActionHeader
 	Vendor VendorId
 }
