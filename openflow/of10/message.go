@@ -560,3 +560,26 @@ var QueueOperationFailedCodes = struct {
 	OFPQOFC_BAD_QUEUE,
 	OFPQOFC_EPERM,
 }
+
+type Hello struct {
+	Header
+	Body []uint8
+}
+
+type EchoMessage struct {
+	Header
+	Body []uint8
+}
+
+type EchoRequest struct {
+	EchoMessage
+}
+
+type EchoReply struct {
+	EchoMessage
+}
+
+type VendorHeader struct {
+	Header
+	Vendor VendorId
+}
