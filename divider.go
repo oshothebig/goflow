@@ -15,6 +15,7 @@ type lengthBasedDivider struct {
 	maxLength         int
 	lengthFieldOffset int
 	lengthFieldLength int
+	lengthAdjustment  int
 }
 
 func (divider *lengthBasedDivider) minReadLength() int {
@@ -28,7 +29,7 @@ func (divider *lengthBasedDivider) Divide(reader io.Reader) ([]byte, error) {
 		return nil, err
 	}
 
-	length := uint64(divider.minReadLength()) + divider.getLength(header)
+	length := divider.bytesToRead(header)
 	data := make([]byte, length)
 	n, err := buf.Read(data)
 	if err != nil {
@@ -38,16 +39,20 @@ func (divider *lengthBasedDivider) Divide(reader io.Reader) ([]byte, error) {
 	return data, nil
 }
 
-func (divider *lengthBasedDivider) getLength(header []byte) uint64 {
+func (divider *lengthBasedDivider) getLength(header []byte) int64 {
 	b := header[divider.lengthFieldOffset:]
-	return Uint64(b)
+	return bigEndianValue(b)
 }
 
-func Uint64(b []byte) uint64 {
+func (divider *lengthBasedDivider) bytesToRead(header []byte) uint64 {
+	return uint64(int64(divider.minReadLength()) + divider.getLength(header) + int64(divider.lengthAdjustment))
+}
+
+func bigEndianValue(b []byte) int64 {
 	var length uint64
 	if len(b) > 8 {
 		binary.Read(bytes.NewReader(b[len(b)-8:]), binary.BigEndian, &length)
-		return length
+		return int64(length)
 	}
 
 	for i, v := range b {
@@ -55,7 +60,7 @@ func Uint64(b []byte) uint64 {
 		length |= uint64(v) << shift
 	}
 
-	return length
+	return int64(length)
 }
 
 func wrapReader(r io.Reader) *bufio.Reader {
