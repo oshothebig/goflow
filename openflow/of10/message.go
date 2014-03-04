@@ -520,7 +520,7 @@ var FlowModFailedCodes = struct {
 	PermissionError     ErrorCode
 	BadEmergencyTimeout ErrorCode
 	BadCommand          ErrorCode
-	Unsupported         EC
+	Unsupported         ErrorCode
 }{
 	OFPFMFC_ALL_TABLES_FULL,
 	OFPFMFC_OVERLAP,
