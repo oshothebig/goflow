@@ -21,7 +21,7 @@ type Header struct {
 	Xid     uint32
 }
 
-func (h *Header) Header() *Header {
+func (h *Header) GetHeader() *Header {
 	return h
 }
 

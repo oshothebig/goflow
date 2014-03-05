@@ -10,6 +10,12 @@ type FeaturesRequest struct {
 	Header
 }
 
+func NewFeaturesRequest() *FeaturesRequest {
+	return &FeaturesRequest{
+		*NewHeader(MessageTypes.FeaturesRequest),
+	}
+}
+
 type FeaturesReply struct {
 	Header
 	DatapathId   DatapathId
