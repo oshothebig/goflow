@@ -577,21 +577,23 @@ type EchoMessage struct {
 	Body []uint8
 }
 
+func newEchoMessage(typ MessageType, body []byte) *EchoMessage {
+	if body == nil {
+		body = make([]byte, 0)
+	}
+
+	return &EchoMessage{
+		*NewHeader(typ),
+		body,
+	}
+}
+
 type EchoRequest struct {
 	EchoMessage
 }
 
 func NewEchoRequest(body []byte) *EchoRequest {
-	if body == nil {
-		body = make([]byte, 0)
-	}
-
-	return &EchoRequest{
-		EchoMessage{
-			*NewHeader(MessageTypes.EchoRequest),
-			body,
-		},
-	}
+	return &EchoRequest{*newEchoMessage(MessageTypes.EchoRequest, body)}
 }
 
 type EchoReply struct {
