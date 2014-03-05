@@ -581,6 +581,19 @@ type EchoRequest struct {
 	EchoMessage
 }
 
+func NewEchoRequest(body []byte) *EchoRequest {
+	if body == nil {
+		body = make([]byte, 0)
+	}
+
+	return &EchoRequest{
+		EchoMessage{
+			*NewHeader(MessageTypes.EchoRequest),
+			body,
+		},
+	}
+}
+
 type EchoReply struct {
 	EchoMessage
 }
