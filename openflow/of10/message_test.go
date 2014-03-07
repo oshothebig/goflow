@@ -4,6 +4,14 @@ import (
 	"testing"
 )
 
+func TestNewHello(t *testing.T) {
+	instance := NewHello(nil)
+	actual := instance.GetHeader().Type
+	if actual != OFPT_HELLO {
+		t.Errorf("Actual: %#v, Expected: %#v", actual, OFPT_HELLO)
+	}
+}
+
 func TestNewFeaturesRequest(t *testing.T) {
 	instance := NewFeaturesRequest()
 	actual := instance.GetHeader().Type

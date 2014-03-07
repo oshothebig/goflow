@@ -572,6 +572,17 @@ type Hello struct {
 	Body []uint8
 }
 
+func NewHello(body []byte) *Hello {
+	if body == nil {
+		body = make([]byte, 0)
+	}
+
+	return &Hello{
+		*NewHeader(MessageTypes.Hello),
+		body,
+	}
+}
+
 type EchoMessage struct {
 	Header
 	Body []uint8
