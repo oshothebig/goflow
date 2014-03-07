@@ -11,7 +11,7 @@ type Packetizable interface {
 
 type Message interface {
 	Packetizable
-	Header() *Header
+	GetHeader() *Header
 }
 
 type Header struct {
