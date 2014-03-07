@@ -319,8 +319,16 @@ type BarrierRequest struct {
 	Header
 }
 
+func NewBarrierRequest() *BarrierRequest {
+	return &BarrierRequest{*NewHeader(MessageTypes.BarrierRequest)}
+}
+
 type BarrierReply struct {
 	Header
+}
+
+func NewBarrierReply() *BarrierReply {
+	return &BarrierReply{*NewHeader(MessageTypes.BarrierReply)}
 }
 
 type PacketIn struct {
