@@ -600,6 +600,10 @@ type EchoReply struct {
 	EchoMessage
 }
 
+func NewEchoReply(body []byte) *EchoReply {
+	return &EchoReply{*newEchoMessage(MessageTypes.EchoReply, body)}
+}
+
 type VendorHeader struct {
 	Header
 	Vendor VendorId

@@ -19,3 +19,11 @@ func TestNewEchoRequest(t *testing.T) {
 		t.Errorf("Actual: %#v, Expected: %#v", actual, OFPT_ECHO_REQUEST)
 	}
 }
+
+func TestNewEchoReply(t *testing.T) {
+	instance := NewEchoReply(nil)
+	actual := instance.GetHeader().Type
+	if actual != OFPT_ECHO_REPLY {
+		t.Errorf("Actual: %#v, Expected: %#v", actual, OFPT_ECHO_REPLY)
+	}
+}
