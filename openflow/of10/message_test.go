@@ -44,6 +44,22 @@ func TestNewGetConfigRequest(t *testing.T) {
 	}
 }
 
+func TestNewGetConfigReply(t *testing.T) {
+	instance := NewGetConfigReply(ConfigFlags.FragmentNormal, 0)
+	actual := instance.GetHeader().Type
+	if actual != OFPT_GET_CONFIG_REPLY {
+		t.Errorf("Actual: %#v, Expected: %#v", actual, OFPT_GET_CONFIG_REPLY)
+	}
+}
+
+func TestNewSetConfig(t *testing.T) {
+	instance := NewSetConfig(ConfigFlags.FragmentNormal, 0)
+	actual := instance.GetHeader().Type
+	if actual != OFPT_SET_CONFIG {
+		t.Errorf("Actual: %#v, Expected: %#v", actual, OFPT_SET_CONFIG)
+	}
+}
+
 func TestNewBarrierRequest(t *testing.T) {
 	instance := NewBarrierRequest()
 	actual := instance.GetHeader().Type

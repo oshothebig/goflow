@@ -75,6 +75,30 @@ type SwitchConfig struct {
 	MissSendLength uint16
 }
 
+func newSwitchConfig(typ MessageType, flags ConfigFlag, missSendLength uint16) *SwitchConfig {
+	return &SwitchConfig{
+		*NewHeader(typ),
+		flags,
+		missSendLength,
+	}
+}
+
+type GetConfigReply struct {
+	SwitchConfig
+}
+
+func NewGetConfigReply(flags ConfigFlag, missSendLength uint16) *GetConfigReply {
+	return &GetConfigReply{*newSwitchConfig(MessageTypes.GetConfigReply, flags, missSendLength)}
+}
+
+type SetConfig struct {
+	SwitchConfig
+}
+
+func NewSetConfig(flags ConfigFlag, missSendLength uint16) *SetConfig {
+	return &SetConfig{*newSwitchConfig(MessageTypes.SetConfig, flags, missSendLength)}
+}
+
 type ConfigFlag uint16
 
 const (
