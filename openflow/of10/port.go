@@ -107,3 +107,46 @@ var PortNumbers = struct {
 	OFPP_LOCAL,
 	OFPP_NONE,
 }
+
+const (
+	OFPPF_10MB_HD PortFeature = 1 << iota
+	OFPPF_10MB_FD
+	OFPPF_100MB_HD
+	OFPPF_100MB_FD
+	OFPPF_1GB_HD
+	OFPPF_1GB_FD
+	OFPPF_10GB_FD
+	OFPPF_COPPER
+	OFPPF_FIBER
+	OFPPF_AUTONEG
+	OFPPF_PAUSE
+	OFPPF_PAUSE_ASYM
+)
+
+var PortFeatures = struct {
+	HalfDuplex10M   PortFeature
+	FullDuplex10M   PortFeature
+	HalfDuplex100M  PortFeature
+	FullDuplex100M  PortFeature
+	HalfDuplex1G    PortFeature
+	FullDuplex1G    PortFeature
+	FullDuplex10G   PortFeature
+	Copper          PortFeature
+	Fiber           PortFeature
+	AutoNegotiation PortFeature
+	Pause           PortFeature
+	AsymmetricPause PortFeature
+}{
+	OFPPF_10MB_HD,
+	OFPPF_10MB_FD,
+	OFPPF_100MB_HD,
+	OFPPF_100MB_FD,
+	OFPPF_1GB_HD,
+	OFPPF_1GB_FD,
+	OFPPF_10GB_FD,
+	OFPPF_COPPER,
+	OFPPF_FIBER,
+	OFPPF_AUTONEG,
+	OFPPF_PAUSE,
+	OFPPF_PAUSE_ASYM,
+}
