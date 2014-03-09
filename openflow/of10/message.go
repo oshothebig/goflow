@@ -61,6 +61,14 @@ var Capabilities = struct {
 	OFPC_ARP_MATCH_IP,
 }
 
+type GetConfigRequest struct {
+	Header
+}
+
+func NewGetConfigRequest() *GetConfigRequest {
+	return &GetConfigRequest{*NewHeader(MessageTypes.GetConfigRequest)}
+}
+
 type SwitchConfig struct {
 	Header
 	Flags          ConfigFlag
