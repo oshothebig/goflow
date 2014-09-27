@@ -25,6 +25,11 @@ func (h *Header) GetHeader() *Header {
 	return h
 }
 
+type GenericMessage struct {
+	Header
+	Payload []byte
+}
+
 func NewXidGenerator() func() uint32 {
 	var xid uint32 = 0
 	return func() uint32 {
