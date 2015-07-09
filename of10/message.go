@@ -3,7 +3,7 @@ package of10
 import (
 	"net"
 
-	. "github.com/oshothebig/goflow/openflow"
+	. "github.com/oshothebig/goflow"
 )
 
 type FeaturesRequest struct {

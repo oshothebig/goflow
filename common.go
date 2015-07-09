@@ -1,4 +1,4 @@
-package openflow
+package goflow
 
 import "io"
 

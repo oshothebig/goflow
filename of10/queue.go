@@ -1,6 +1,6 @@
 package of10
 
-import . "github.com/oshothebig/goflow/openflow"
+import . "github.com/oshothebig/goflow"
 
 type PacketQueue struct {
 	QueueId    uint32
