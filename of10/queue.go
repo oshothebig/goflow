@@ -1,7 +1,5 @@
 package of10
 
-import . "github.com/oshothebig/goflow"
-
 type PacketQueue struct {
 	QueueId    uint32
 	Length     uint16

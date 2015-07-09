@@ -1,7 +1,5 @@
 package of10
 
-import . "github.com/oshothebig/goflow"
-
 const WireProtocolVersion = 0x01
 
 func NewHeader(typ MessageType) *Header {
