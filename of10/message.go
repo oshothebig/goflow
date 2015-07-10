@@ -521,6 +521,7 @@ func (m *FlowRemoved) FillBody(body []byte) error {
 	if err := binary.Read(buf, binary.BigEndian, &m.ByteCount); err != nil {
 		return err
 	}
+	return nil
 }
 
 type FlowRemovedReason uint8
