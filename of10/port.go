@@ -1,5 +1,9 @@
 package of10
 
+import (
+	"bytes"
+	"encoding/binary"
+)
 
 const MaxPortNameLength = 16
 const EthernetAddressLength = 6
@@ -19,6 +23,19 @@ type PhysicalPort struct {
 	AdvertisedFeatures PortFeature
 	SupportedFeatures  PortFeature
 	PeerFeatures       PortFeature
+}
+
+func readPhysicalPort(b []byte) ([]PhysicalPort, error) {
+	var port PhysicalPort
+	count := len(b) / binary.Size(port)
+	ports := make([]PhysicalPort, count)
+
+	buf := bytes.NewBuffer(b)
+	if err := binary.Read(buf, binary.BigEndian, port); err != nil {
+		return nil, err
+	}
+
+	return ports, nil
 }
 
 const (
