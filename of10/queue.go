@@ -1,10 +1,11 @@
 package of10
 
+// TODO: Properties should be generalized
 type PacketQueue struct {
 	QueueId    uint32
 	Length     uint16
 	pad        [2]uint8
-	Properties []QueueProperty
+	Properties []uint8
 }
 
 type QueueProperty interface {
