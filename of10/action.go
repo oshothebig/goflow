@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	errUnsupportedAction error = errors.New("Unsupported action type")
+	errUnsupportedAction = errors.New("Unsupported action type")
 )
 
 type ActionType uint16
