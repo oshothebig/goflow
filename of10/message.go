@@ -584,7 +584,8 @@ type EchoReply struct {
 	Body []uint8
 }
 
-type VendorHeader struct {
+type VendorMessage struct {
 	Header
 	Vendor VendorId
+	Body   []uint8
 }
