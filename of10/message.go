@@ -10,6 +10,10 @@ type FeaturesRequest struct {
 	Header
 }
 
+func (m *FeaturesRequest) FillBody(body []byte) error {
+	return nil
+}
+
 type FeaturesReply struct {
 	Header
 	DatapathId   DatapathId
@@ -19,6 +23,36 @@ type FeaturesReply struct {
 	Capabilities Capability
 	Actions      ActionType
 	Ports        []PhysicalPort
+}
+
+func (m *FeaturesReply) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.DatapathId); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Buffers); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Tables); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Capabilities); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Actions); err != nil {
+		return err
+	}
+	portsBytes := buf.Bytes()
+	ports, err := readPhysicalPort(portsBytes)
+	if err != nil {
+		return err
+	}
+
+	m.Ports = ports
+	return nil
 }
 
 type DatapathId uint64
