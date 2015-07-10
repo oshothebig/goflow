@@ -47,6 +47,20 @@ func readAction(buf *bytes.Buffer) (Action, error) {
 	return action, nil
 }
 
+func readActions(buf *bytes.Buffer) []Action {
+	actions := make([]Action, 0, 8)
+	remain := buf.Len()
+	for remain != 0 {
+		action, err := readAction(buf)
+		if err != nil {
+			break
+		}
+		remain = buf.Len()
+		actions = append(actions, action)
+	}
+	return actions
+}
+
 func newAction(h *ActionHeader) Action {
 	switch h.Type {
 	case ActionTypes.Output:
