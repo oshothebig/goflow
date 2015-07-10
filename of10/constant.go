@@ -486,3 +486,132 @@ const (
 	OFPHFC_INCOMPATIBLE ErrorCode = iota
 	OFPHFC_EPERM
 )
+
+const (
+	OFPC_FLOW_STATS Capability = 1 << iota
+	OFPC_TABLE_STATS
+	OFPC_PORT_STATS
+	OFPC_STP
+	OFPC_RESERVED
+	OFPC_IP_REASM
+	OFPC_QUEUE_STATS
+	OFPC_ARP_MATCH_IP
+)
+
+var Capabilities = struct {
+	FlowStats    Capability
+	TableStats   Capability
+	PortStats    Capability
+	Stp          Capability
+	Reserved     Capability
+	IpReassemble Capability
+	QueueStats   Capability
+	ArpMatchIp   Capability
+}{
+	OFPC_FLOW_STATS,
+	OFPC_TABLE_STATS,
+	OFPC_PORT_STATS,
+	OFPC_STP,
+	OFPC_RESERVED,
+	OFPC_IP_REASM,
+	OFPC_QUEUE_STATS,
+	OFPC_ARP_MATCH_IP,
+}
+
+const (
+	OFPC_FRAG_NORMAL ConfigFlag = iota
+	OFPC_FRAG_DROP
+	OFPC_FRAG_REASM
+	OFPC_FRAG_MASK
+)
+
+var ConfigFlags = struct {
+	FragmentNormal     ConfigFlag
+	FragmentDrop       ConfigFlag
+	FragmentReassemble ConfigFlag
+	FragmentMask       ConfigFlag
+}{
+	OFPC_FRAG_NORMAL,
+	OFPC_FRAG_DROP,
+	OFPC_FRAG_REASM,
+	OFPC_FRAG_MASK,
+}
+
+const (
+	OFPFC_ADD FlowModCommand = iota
+	OFPFC_MODIFY
+	OFPFC_MODIFY_STRICT
+	OFPFC_DELETE
+	OFPFC_DELETE_STRICT
+)
+
+var FlowModCommands = struct {
+	Add          FlowModCommand
+	Modify       FlowModCommand
+	ModifyStrict FlowModCommand
+	Delete       FlowModCommand
+	DeleteStrict FlowModCommand
+}{
+	OFPFC_ADD,
+	OFPFC_MODIFY,
+	OFPFC_MODIFY_STRICT,
+	OFPFC_DELETE,
+	OFPFC_DELETE_STRICT,
+}
+
+const (
+	OFPFF_SEND_FLOW_REM FlowModFlag = 1 << iota
+	OFPFF_CHECK_OVERLAP
+	OFPFF_EMERG
+)
+
+var FlowModFlags = struct {
+	SendFlowRemoved FlowModFlag
+	CheckOverlap    FlowModFlag
+	Emergency       FlowModFlag
+}{
+	OFPFF_SEND_FLOW_REM,
+	OFPFF_CHECK_OVERLAP,
+	OFPFF_EMERG,
+}
+
+const (
+	OFPST_DESC StatsType = iota
+	OFPST_FLOW
+	OFPST_AGGREGATE
+	OFPST_TABLE
+	OFPST_PORT
+	OFPST_QUEUE
+	OFPST_VENDOR StatsType = 0xffff
+)
+
+var StatsTypes = struct {
+	Description StatsType
+	Flow        StatsType
+	Aggregate   StatsType
+	Table       StatsType
+	Port        StatsType
+	Queue       StatsType
+	Vendor      StatsType
+}{
+	OFPST_DESC,
+	OFPST_FLOW,
+	OFPST_AGGREGATE,
+	OFPST_TABLE,
+	OFPST_PORT,
+	OFPST_QUEUE,
+	OFPST_VENDOR,
+}
+
+const (
+	OFPR_NO_MATCH PacketInReason = iota
+	OFPR_ACTION
+)
+
+var PacketInReasons = struct {
+	NoMatch PacketInReason
+	Action  PacketInReason
+}{
+	OFPR_NO_MATCH,
+	OFPR_ACTION,
+}
