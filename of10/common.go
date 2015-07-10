@@ -2,16 +2,6 @@ package of10
 
 const WireProtocolVersion = 0x01
 
-func NewHeader(typ MessageType) *Header {
-	h := new(Header)
-	h.Version = WireProtocolVersion
-	h.Type = typ
-	h.Length = MinimumHeaderLength
-	h.Xid = generateXid()
-
-	return h
-}
-
 var generateXid func() uint32 = NewXidGenerator()
 
 const (
