@@ -62,7 +62,9 @@ type SwitchConfig struct {
 }
 
 type GetConfigReply struct {
-	SwitchConfig
+	Header
+	Flags          ConfigFlag
+	MissSendLength uint16
 }
 
 type SetConfig struct {
