@@ -454,6 +454,43 @@ type FlowRemoved struct {
 	ByteCount       uint64
 }
 
+func (m *FlowRemoved) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Match); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Cookie); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Priority); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Reason); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.DurationSec); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.DurationNanoSec); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.IdleTimeout); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad2); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.PacketCount); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.ByteCount); err != nil {
+		return err
+	}
+}
+
 type FlowRemovedReason uint8
 
 const (
