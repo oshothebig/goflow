@@ -93,6 +93,10 @@ type GetConfigRequest struct {
 	Header
 }
 
+func (m *GetConfigRequest) FillBody(body []byte) error {
+	return nil
+}
+
 type SwitchConfig struct {
 	Header
 	Flags          ConfigFlag
@@ -103,6 +107,17 @@ type GetConfigReply struct {
 	Header
 	Flags          ConfigFlag
 	MissSendLength uint16
+}
+
+func (m *GetConfigReply) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.MissSendLength); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SetConfig struct {
