@@ -10,7 +10,6 @@ type Packetizable interface {
 }
 
 type Message interface {
-	Packetizable
 	GetHeader() *Header
 }
 
