@@ -423,6 +423,18 @@ type ErrorMessage struct {
 	Data []uint8
 }
 
+func (m *ErrorMessage) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Type); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Code); err != nil {
+		return err
+	}
+	m.Data = buf.Bytes()
+	return nil
+}
+
 type ErrorType uint16
 
 const (
