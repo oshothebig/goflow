@@ -413,8 +413,16 @@ type BarrierRequest struct {
 	Header
 }
 
+func (m *BarrierRequest) FillBody(body []byte) error {
+	return nil
+}
+
 type BarrierReply struct {
 	Header
+}
+
+func (m *BarrierReply) FillBody(body []byte) error {
+	return nil
 }
 
 type PacketIn struct {
