@@ -516,6 +516,20 @@ type PortStatus struct {
 	Description PhysicalPort
 }
 
+func (m *PortStatus) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Reason); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Description); err != nil {
+		return err
+	}
+	return nil
+}
+
 type PortStatusReason uint8
 
 const (
