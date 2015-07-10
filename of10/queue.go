@@ -15,19 +15,6 @@ type QueueProperty interface {
 
 type QueuePropertyType uint16
 
-const (
-	OFPQT_NONE QueuePropertyType = iota
-	OFPQT_MIN_RATE
-)
-
-var QueuePropertyTypes = struct {
-	None    QueuePropertyType
-	MinRate QueuePropertyType
-}{
-	OFPQT_NONE,
-	OFPQT_MIN_RATE,
-}
-
 type QueuePropertyHeader struct {
 	Property QueuePropertyType
 	Length   uint16
