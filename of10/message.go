@@ -622,3 +622,13 @@ type VendorMessage struct {
 	Vendor VendorId
 	Body   []uint8
 }
+
+func (m *VendorMessage) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	err := binary.Read(buf, binary.BigEndian, &m.Vendor)
+	if err != nil {
+		return err
+	}
+	m.Body = buf.Bytes()
+	return nil
+}
