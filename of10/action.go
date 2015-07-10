@@ -14,10 +14,6 @@ type ActionHeader struct {
 	Length uint16
 }
 
-func NewActionHeader(typ ActionType, length uint16) *ActionHeader {
-	return &ActionHeader{typ, length}
-}
-
 func (header *ActionHeader) GetType() ActionType {
 	return header.Type
 }
@@ -26,14 +22,6 @@ type SendOutPort struct {
 	ActionHeader
 	Port      PortNumber
 	MaxLength uint16
-}
-
-func NewSendOutPort(port PortNumber, maxLength uint16) *SendOutPort {
-	return &SendOutPort{
-		*NewActionHeader(ActionTypes.Output, 8),
-		port,
-		maxLength,
-	}
 }
 
 type Enqueue struct {
