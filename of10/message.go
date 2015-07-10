@@ -1,6 +1,10 @@
 package of10
 
-import "net"
+import (
+	"bytes"
+	"encoding/binary"
+	"net"
+)
 
 type FeaturesRequest struct {
 	Header
@@ -575,6 +579,10 @@ var QueueOperationFailedCodes = struct {
 
 type Hello struct {
 	Header
+}
+
+func (m *Hello) FillBody(body []byte) error {
+	return nil
 }
 
 type EchoRequest struct {
