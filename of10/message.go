@@ -602,9 +602,19 @@ type EchoRequest struct {
 	Body []uint8
 }
 
+func (m *EchoRequest) FillBody(body []byte) error {
+	m.Body = body
+	return nil
+}
+
 type EchoReply struct {
 	Header
 	Body []uint8
+}
+
+func (m *EchoReply) FillBody(body []byte) error {
+	m.Body = body
+	return nil
 }
 
 type VendorMessage struct {
