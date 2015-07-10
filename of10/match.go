@@ -1,12 +1,10 @@
 package of10
 
-import "net"
-
 type Match struct {
 	Wildcards    Wildcard
 	InPort       PortNumber
-	EthSrc       net.HardwareAddr
-	EthDst       net.HardwareAddr
+	EthSrc       [EthernetAddressLength]uint8
+	EthDst       [EthernetAddressLength]uint8
 	VlanId       VlanId
 	VlanPriority VlanPriority
 	pad1         [1]uint8
@@ -14,8 +12,8 @@ type Match struct {
 	IpTos        Dscp
 	IpProtocol   ProtocolNumber
 	pad2         [2]uint8
-	IpSrc        net.IP
-	IpDst        net.IP
+	IpSrc        [4]uint8
+	IpDst        [4]uint8
 	TransportSrc TransportPort
 	TransportDst TransportPort
 }

@@ -1,8 +1,8 @@
 package of10
 
-import "net"
 
 const MaxPortNameLength = 16
+const EthernetAddressLength = 6
 
 type PortNumber uint16
 type PortConfig uint16
@@ -11,7 +11,7 @@ type PortFeature uint16
 
 type PhysicalPort struct {
 	PortNumber         PortNumber
-	HardwareAddress    net.HardwareAddr
+	HardwareAddress    [EthernetAddressLength]uint8
 	Name               [MaxPortNameLength]uint8
 	Config             PortConfig
 	State              PortState
