@@ -575,7 +575,6 @@ var QueueOperationFailedCodes = struct {
 
 type Hello struct {
 	Header
-	Body []uint8
 }
 
 type EchoRequest struct {
