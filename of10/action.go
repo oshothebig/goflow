@@ -5,7 +5,6 @@ import "net"
 type ActionType uint16
 
 type Action interface {
-	Packetizable
 	GetType() ActionType
 }
 
