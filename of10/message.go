@@ -6,12 +6,6 @@ type FeaturesRequest struct {
 	Header
 }
 
-func NewFeaturesRequest() *FeaturesRequest {
-	return &FeaturesRequest{
-		*NewHeader(MessageTypes.FeaturesRequest),
-	}
-}
-
 type FeaturesReply struct {
 	Header
 	DatapathId   DatapathId
@@ -61,38 +55,18 @@ type GetConfigRequest struct {
 	Header
 }
 
-func NewGetConfigRequest() *GetConfigRequest {
-	return &GetConfigRequest{*NewHeader(MessageTypes.GetConfigRequest)}
-}
-
 type SwitchConfig struct {
 	Header
 	Flags          ConfigFlag
 	MissSendLength uint16
 }
 
-func newSwitchConfig(typ MessageType, flags ConfigFlag, missSendLength uint16) *SwitchConfig {
-	return &SwitchConfig{
-		*NewHeader(typ),
-		flags,
-		missSendLength,
-	}
-}
-
 type GetConfigReply struct {
 	SwitchConfig
 }
 
-func NewGetConfigReply(flags ConfigFlag, missSendLength uint16) *GetConfigReply {
-	return &GetConfigReply{*newSwitchConfig(MessageTypes.GetConfigReply, flags, missSendLength)}
-}
-
 type SetConfig struct {
 	SwitchConfig
-}
-
-func NewSetConfig(flags ConfigFlag, missSendLength uint16) *SetConfig {
-	return &SetConfig{*newSwitchConfig(MessageTypes.SetConfig, flags, missSendLength)}
 }
 
 type ConfigFlag uint16
@@ -347,16 +321,8 @@ type BarrierRequest struct {
 	Header
 }
 
-func NewBarrierRequest() *BarrierRequest {
-	return &BarrierRequest{*NewHeader(MessageTypes.BarrierRequest)}
-}
-
 type BarrierReply struct {
 	Header
-}
-
-func NewBarrierReply() *BarrierReply {
-	return &BarrierReply{*NewHeader(MessageTypes.BarrierReply)}
 }
 
 type PacketIn struct {
@@ -608,47 +574,18 @@ type Hello struct {
 	Body []uint8
 }
 
-func NewHello(body []byte) *Hello {
-	if body == nil {
-		body = make([]byte, 0)
-	}
-
-	return &Hello{
-		*NewHeader(MessageTypes.Hello),
-		body,
-	}
-}
-
 type EchoMessage struct {
 	Header
 	Body []uint8
 }
 
-func newEchoMessage(typ MessageType, body []byte) *EchoMessage {
-	if body == nil {
-		body = make([]byte, 0)
-	}
-
-	return &EchoMessage{
-		*NewHeader(typ),
-		body,
-	}
-}
-
 type EchoRequest struct {
-	EchoMessage
-}
-
-func NewEchoRequest(body []byte) *EchoRequest {
-	return &EchoRequest{*newEchoMessage(MessageTypes.EchoRequest, body)}
+	Header
+	Body []uint8
 }
 
 type EchoReply struct {
 	EchoMessage
-}
-
-func NewEchoReply(body []byte) *EchoReply {
-	return &EchoReply{*newEchoMessage(MessageTypes.EchoReply, body)}
 }
 
 type VendorHeader struct {
