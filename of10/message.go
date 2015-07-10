@@ -403,6 +403,27 @@ type PacketIn struct {
 	Data        []uint8
 }
 
+func (m *PacketIn) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.BufferId); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.TotalLength); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.InPort); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Reason); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
+		return err
+	}
+	m.Data = buf.Bytes()
+	return nil
+}
+
 type PacketInReason uint8
 
 const (
