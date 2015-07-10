@@ -245,11 +245,35 @@ type StatsRequest struct {
 	Body  []uint8
 }
 
+func (m *StatsRequest) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Type); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
+		return err
+	}
+	m.Body = buf.Bytes()
+	return nil
+}
+
 type StatsReply struct {
 	Header
 	Type  StatsType
 	Flags uint16
 	Body  []uint8
+}
+
+func (m *StatsReply) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Type); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
+		return err
+	}
+	m.Body = buf.Bytes()
+	return nil
 }
 
 type StatsType uint16
