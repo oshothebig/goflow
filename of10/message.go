@@ -574,18 +574,14 @@ type Hello struct {
 	Body []uint8
 }
 
-type EchoMessage struct {
-	Header
-	Body []uint8
-}
-
 type EchoRequest struct {
 	Header
 	Body []uint8
 }
 
 type EchoReply struct {
-	EchoMessage
+	Header
+	Body []uint8
 }
 
 type VendorHeader struct {
