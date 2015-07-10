@@ -312,3 +312,177 @@ var QueuePropertyTypes = struct {
 	OFPQT_NONE,
 	OFPQT_MIN_RATE,
 }
+
+const (
+	OFPRR_IDLE_TIMEOUT FlowRemovedReason = iota
+	OFPRR_HARD_TIMEOUT
+	OFPRR_DELETE
+)
+
+var FlowRemovedReasons = struct {
+	IdleTimeout FlowRemovedReason
+	HardTimeout FlowRemovedReason
+	Delete      FlowRemovedReason
+}{
+	OFPRR_IDLE_TIMEOUT,
+	OFPRR_HARD_TIMEOUT,
+	OFPRR_DELETE,
+}
+
+const (
+	OFPPR_ADD PortStatusReason = iota
+	OFPPR_DELETE
+	OFPPR_MODIFY
+)
+
+var PortStatusReasons = struct {
+	Add    PortStatusReason
+	Delete PortStatusReason
+	Modify PortStatusReason
+}{
+	OFPPR_ADD,
+	OFPPR_DELETE,
+	OFPPR_MODIFY,
+}
+
+const (
+	OFPET_HELLO_FAILED ErrorType = iota
+	OFPET_BAD_REQUEST
+	OFPET_BAD_ACTION
+	OFPET_FLOW_MOD_FAILED
+	OFPET_PORT_MOD_FAILED
+	OFPET_QUEUE_OP_FAILED
+)
+
+// ErrorCode for Bad Request
+const (
+	OFPBRC_BAD_VERSION ErrorCode = iota
+	OFPBRC_BAD_TYPE
+	OFPBRC_BAD_STAT
+	OFPBRC_BAD_VENDOR
+	OFPBRC_BAD_SUBTYPE
+	OFPBRC_EPERM
+	OFPBRC_BAD_LEN
+	OFPBRC_BUFFER_EMPTY
+	OFPBRC_BUFFER_UNKNOWN
+)
+
+var BadRequestCodes = struct {
+	BadVersion       ErrorCode
+	BadType          ErrorCode
+	BadStatRequest   ErrorCode
+	BadVendorType    ErrorCode
+	BadVendorSubType ErrorCode
+	PermissionError  ErrorCode
+	BadLength        ErrorCode
+	BufferEmpty      ErrorCode
+	BufferUnknown    ErrorCode
+}{
+	OFPBRC_BAD_VERSION,
+	OFPBRC_BAD_TYPE,
+	OFPBRC_BAD_STAT,
+	OFPBRC_BAD_VENDOR,
+	OFPBRC_BAD_SUBTYPE,
+	OFPBRC_EPERM,
+	OFPBRC_BAD_LEN,
+	OFPBRC_BUFFER_EMPTY,
+	OFPBRC_BUFFER_UNKNOWN,
+}
+
+// ErrorCode for Bad Action
+const (
+	OFPBAC_BAD_TYPE ErrorCode = iota
+	OFPBAC_BAD_LEN
+	OFPBAC_BAD_VENDOR
+	OFPBAC_BAD_VENDOR_TYPE
+	OFPBAC_BAD_OUT_PORT
+	OFPBAC_BAD_ARGUMENT
+	OFPBAC_EPERM
+	OFPBAC_TOO_MANY
+	OFPBAC_BAD_QUEUE
+)
+
+var BadActionCodes = struct {
+	BadType         ErrorCode
+	BadLength       ErrorCode
+	BadVendorId     ErrorCode
+	BadVendorType   ErrorCode
+	BadOutPort      ErrorCode
+	BadArgument     ErrorCode
+	PermissionError ErrorCode
+	TooManyActions  ErrorCode
+	BadQeueu        ErrorCode
+}{
+	OFPBAC_BAD_TYPE,
+	OFPBAC_BAD_LEN,
+	OFPBAC_BAD_VENDOR,
+	OFPBAC_BAD_VENDOR_TYPE,
+	OFPBAC_BAD_OUT_PORT,
+	OFPBAC_BAD_ARGUMENT,
+	OFPBAC_EPERM,
+	OFPBAC_TOO_MANY,
+	OFPBAC_BAD_QUEUE,
+}
+
+// ErrorCode for Flow Mod Failed
+const (
+	OFPFMFC_ALL_TABLES_FULL ErrorCode = iota
+	OFPFMFC_OVERLAP
+	OFPFMFC_EPERM
+	OFPFMFC_BAD_EMERG_TIMEOUT
+	OFPFMFC_BAD_COMMAND
+	OFPFMFC_UNSUPPORTED
+)
+
+var FlowModFailedCodes = struct {
+	AllTablesFull       ErrorCode
+	Overlap             ErrorCode
+	PermissionError     ErrorCode
+	BadEmergencyTimeout ErrorCode
+	BadCommand          ErrorCode
+	Unsupported         ErrorCode
+}{
+	OFPFMFC_ALL_TABLES_FULL,
+	OFPFMFC_OVERLAP,
+	OFPFMFC_EPERM,
+	OFPFMFC_BAD_EMERG_TIMEOUT,
+	OFPFMFC_BAD_COMMAND,
+	OFPFMFC_UNSUPPORTED,
+}
+
+// ErrorCode for Port Mod Failed
+const (
+	OFPPMFC_BAD_PORT ErrorCode = iota
+	OFPPMFC_BAD_HW_ADDR
+)
+
+var PortModFailedCode = struct {
+	BadPort            ErrorCode
+	BadHardwareAddress ErrorCode
+}{
+	OFPPMFC_BAD_PORT,
+	OFPPMFC_BAD_HW_ADDR,
+}
+
+// ErrorCode for Queue Op Failed
+const (
+	OFPQOFC_BAD_Port ErrorCode = iota
+	OFPQOFC_BAD_QUEUE
+	OFPQOFC_EPERM
+)
+
+var QueueOperationFailedCodes = struct {
+	BadPort         ErrorCode
+	BadQueue        ErrorCode
+	PermissionError ErrorCode
+}{
+	OFPQOFC_BAD_Port,
+	OFPQOFC_BAD_QUEUE,
+	OFPQOFC_EPERM,
+}
+
+// ErrorCode for Hello Failed
+const (
+	OFPHFC_INCOMPATIBLE ErrorCode = iota
+	OFPHFC_EPERM
+)
