@@ -198,6 +198,17 @@ type QueueGetConfigRequest struct {
 	pad  [2]uint8
 }
 
+func (m *QueueGetConfigRequest) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Port); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
+		return err
+	}
+	return nil
+}
+
 type QueueGetConfigReply struct {
 	Header
 	Port   PortNumber
