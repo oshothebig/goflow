@@ -122,6 +122,39 @@ type FlowMod struct {
 	Actions     []Action
 }
 
+func (m *FlowMod) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Match); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Cookie); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Command); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.IdleTimeout); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.HardTimeout); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Priority); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.BufferId); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.OutPort); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
+		return err
+	}
+	m.Actions = readActions(buf)
+	return nil
+}
+
 type Cookie uint64
 type FlowModCommand uint16
 type BufferId uint32
