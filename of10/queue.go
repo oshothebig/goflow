@@ -19,6 +19,20 @@ type PacketQueue struct {
 	Properties []QueueProperty
 }
 
+func readPacketQueues(buf *bytes.Buffer) []PacketQueue {
+	queues := make([]PacketQueue, 0, 8)
+	remain := buf.Len()
+	for remain != 0 {
+		queue, err := readPacketQueue(buf)
+		if err != nil {
+			break
+		}
+		queues = append(queues, *queue)
+		remain = buf.Len()
+	}
+	return queues
+}
+
 func readPacketQueue(buf *bytes.Buffer) (*PacketQueue, error) {
 	var queue PacketQueue
 	if err := binary.Read(buf, binary.BigEndian, &queue.QueueId); err != nil {

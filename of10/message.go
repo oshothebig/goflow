@@ -216,6 +216,18 @@ type QueueGetConfigReply struct {
 	Queues []PacketQueue
 }
 
+func (m *QueueGetConfigReply) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.Port); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
+		return err
+	}
+	m.Queues = readPacketQueues(buf)
+	return nil
+}
+
 type StatsRequest struct {
 	Header
 	Type  StatsType
