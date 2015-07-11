@@ -3,7 +3,6 @@ package of10
 import (
 	"bytes"
 	"encoding/binary"
-	"net"
 )
 
 type FeaturesRequest struct {
@@ -163,11 +162,34 @@ type FlowModFlag uint16
 type PortMod struct {
 	Header
 	PortNumber      PortNumber
-	HardwareAddress net.HardwareAddr
+	HardwareAddress [EthernetAddressLength]uint8
 	Config          PortConfig
 	Mask            PortConfig
 	Advertise       PortFeature
 	pad             [4]uint8
+}
+
+func (m *PortMod) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.PortNumber); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.HardwareAddress); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Config); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Mask); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.Advertise); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
+		return err
+	}
+	return nil
 }
 
 type QueueGetConfigRequest struct {
