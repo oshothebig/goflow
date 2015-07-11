@@ -9,7 +9,6 @@ type PacketQueue struct {
 }
 
 type QueueProperty interface {
-	Packetizable
 	Header() *QueuePropertyHeader
 }
 
