@@ -11,6 +11,7 @@ type Packetizable interface {
 
 type Message interface {
 	GetHeader() *Header
+	FillBody(bytes []byte) error
 }
 
 type Header struct {
