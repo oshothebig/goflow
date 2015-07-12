@@ -3,6 +3,7 @@ package of10
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
 )
 
 type FeaturesRequest struct {
@@ -369,6 +370,30 @@ type PacketOut struct {
 	ActionsLength uint16
 	Actions       []Action
 	Data          []uint8
+}
+
+func (m *PacketOut) FillBody(body []byte) error {
+	buf := bytes.NewBuffer(body)
+	if err := binary.Read(buf, binary.BigEndian, &m.BufferId); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.InPort); err != nil {
+		return err
+	}
+	if err := binary.Read(buf, binary.BigEndian, &m.ActionsLength); err != nil {
+		return err
+	}
+	actionBytes := make([]byte, m.ActionsLength)
+	if _, err := io.ReadFull(buf, actionBytes); err != nil {
+		return err
+	}
+	m.Actions = readActions(bytes.NewBuffer(actionBytes))
+	dataBytes := make([]byte, len(body)-4-2-2-int(m.ActionsLength))
+	if _, err := io.ReadFull(buf, dataBytes); err != nil {
+		return err
+	}
+	m.Data = dataBytes
+	return nil
 }
 
 type BarrierRequest struct {
