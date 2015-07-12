@@ -12,7 +12,7 @@ var (
 )
 
 func readMessage(reader *bufio.Reader) (Message, error) {
-	headerBytes := make([]byte, MinimumHeaderLength)
+	headerBytes := make([]byte, HeaderLength)
 	if _, err := io.ReadFull(reader, headerBytes); err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func readMessage(reader *bufio.Reader) (Message, error) {
 		return nil, errUnsupportedMessage
 	}
 
-	body := make([]byte, header.Length-MinimumHeaderLength)
+	body := make([]byte, header.Length-HeaderLength)
 	if _, err := io.ReadFull(reader, body); err != nil {
 		return nil, err
 	}

@@ -2,7 +2,7 @@ package of10
 
 import "io"
 
-const MinimumHeaderLength = 8
+const HeaderLength = 8
 
 type Packetizable interface {
 	io.ReadWriter
