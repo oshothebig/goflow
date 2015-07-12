@@ -367,7 +367,7 @@ type PacketOut struct {
 	BufferId      uint32
 	InPort        PortNumber
 	ActionsLength uint16
-	Actions       []ActionHeader
+	Actions       []Action
 	Data          []uint8
 }
 
