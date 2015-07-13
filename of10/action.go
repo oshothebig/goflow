@@ -184,6 +184,10 @@ type SetEtherSrc struct {
 	pad     [6]uint8
 }
 
+func (a *SetEtherSrc) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
+}
+
 func (a *SetEtherSrc) FillBody(buf *bytes.Buffer) error {
 	if err := binary.Read(buf, binary.BigEndian, &a.Address); err != nil {
 		return err
@@ -198,6 +202,10 @@ type SetEtherDst struct {
 	ActionHeader
 	Address [EthernetAddressLength]uint8
 	pad     [6]uint8
+}
+
+func (a *SetEtherDst) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
 }
 
 func (a *SetEtherDst) FillBody(buf *bytes.Buffer) error {
@@ -215,6 +223,10 @@ type SetIpSrc struct {
 	Address [4]uint8
 }
 
+func (a *SetIpSrc) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
+}
+
 func (a *SetIpSrc) FillBody(buf *bytes.Buffer) error {
 	if err := binary.Read(buf, binary.BigEndian, &a.Address); err != nil {
 		return err
@@ -225,6 +237,10 @@ func (a *SetIpSrc) FillBody(buf *bytes.Buffer) error {
 type SetIpDst struct {
 	ActionHeader
 	Address [4]uint8
+}
+
+func (a *SetIpDst) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
 }
 
 func (a *SetIpDst) FillBody(buf *bytes.Buffer) error {
@@ -238,6 +254,10 @@ type SetIpTos struct {
 	ActionHeader
 	Tos Dscp
 	pad [3]uint8
+}
+
+func (a *SetIpTos) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
 }
 
 func (a *SetIpTos) FillBody(buf *bytes.Buffer) error {
@@ -256,6 +276,10 @@ type SetTransportSrc struct {
 	pad  [2]uint8
 }
 
+func (a *SetTransportSrc) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
+}
+
 func (a *SetTransportSrc) FillBody(buf *bytes.Buffer) error {
 	if err := binary.Read(buf, binary.BigEndian, &a.Port); err != nil {
 		return err
@@ -272,6 +296,10 @@ type SetTransportDst struct {
 	pad  [2]uint8
 }
 
+func (a *SetTransportDst) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
+}
+
 func (a *SetTransportDst) FillBody(buf *bytes.Buffer) error {
 	if err := binary.Read(buf, binary.BigEndian, &a.Port); err != nil {
 		return err
@@ -285,6 +313,10 @@ func (a *SetTransportDst) FillBody(buf *bytes.Buffer) error {
 type VendorActionHeader struct {
 	ActionHeader
 	Vendor VendorId
+}
+
+func (a *VendorActionHeader) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), a)
 }
 
 func (a *VendorActionHeader) FillBody(buf *bytes.Buffer) error {
