@@ -28,7 +28,7 @@ type PhysicalPort struct {
 func readPhysicalPort(b []byte) ([]PhysicalPort, error) {
 	var port PhysicalPort
 	count := len(b) / binary.Size(port)
-	ports := make([]PhysicalPort, count)
+	ports := make([]PhysicalPort, 0, count)
 
 	buf := bytes.NewBuffer(b)
 	if err := binary.Read(buf, binary.BigEndian, port); err != nil {
