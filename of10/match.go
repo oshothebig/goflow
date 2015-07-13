@@ -7,11 +7,11 @@ type Match struct {
 	EthDst       [EthernetAddressLength]uint8
 	VlanId       VlanId
 	VlanPriority VlanPriority
-	pad1         [1]uint8
+	_            [1]uint8
 	EtherType    EtherType
 	IpTos        Dscp
 	IpProtocol   ProtocolNumber
-	pad2         [2]uint8
+	_            [2]uint8
 	IpSrc        [4]uint8
 	IpDst        [4]uint8
 	TransportSrc TransportPort
