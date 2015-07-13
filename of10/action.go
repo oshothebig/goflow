@@ -20,7 +20,7 @@ type Action interface {
 	FillBody(buf *bytes.Buffer) error
 }
 
-func readAction(buf *bytes.Buffer) (Action, error) {
+func readAction(buf *bytes.Reader) (Action, error) {
 	// read action header
 	var header ActionHeader
 	if err := binary.Read(buf, binary.BigEndian, &header); err != nil {
@@ -47,15 +47,14 @@ func readAction(buf *bytes.Buffer) (Action, error) {
 	return action, nil
 }
 
-func readActions(buf *bytes.Buffer) []Action {
+func readActions(buf *bytes.Reader, length int) []Action {
 	actions := make([]Action, 0, 8)
-	remain := buf.Len()
-	for remain != 0 {
+	end := buf.Len() - length
+	for buf.Len() > end {
 		action, err := readAction(buf)
 		if err != nil {
 			break
 		}
-		remain = buf.Len()
 		actions = append(actions, action)
 	}
 	return actions

@@ -1,17 +1,13 @@
 package of10
 
-import (
-	"bytes"
-	"encoding/binary"
-	"io"
-)
+import "bytes"
 
 type FeaturesRequest struct {
 	Header
 }
 
-func (m *FeaturesRequest) FillBody(body []byte) error {
-	return nil
+func (m *FeaturesRequest) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type FeaturesReply struct {
@@ -25,32 +21,18 @@ type FeaturesReply struct {
 	Ports        []PhysicalPort
 }
 
-func (m *FeaturesReply) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.DatapathId); err != nil {
+func (m *FeaturesReply) UnmarshalBinary(data []byte) error {
+	size := len(data)
+	fields := []interface{}{&m.Header, &m.DatapathId, &m.Buffers, &m.Tables, &m.pad, &m.Capabilities, &m.Actions}
+	reader := bytes.NewReader(data)
+	if err := unmarshalFields(reader, fields...); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Buffers); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Tables); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Capabilities); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Actions); err != nil {
-		return err
-	}
-	portsBytes := buf.Bytes()
-	ports, err := readPhysicalPort(portsBytes)
+	read := size - reader.Len()
+	ports, err := readPhysicalPort(data[read:])
 	if err != nil {
 		return err
 	}
-
 	m.Ports = ports
 	return nil
 }
@@ -62,8 +44,8 @@ type GetConfigRequest struct {
 	Header
 }
 
-func (m *GetConfigRequest) FillBody(body []byte) error {
-	return nil
+func (m *GetConfigRequest) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type SwitchConfig struct {
@@ -78,15 +60,8 @@ type GetConfigReply struct {
 	MissSendLength uint16
 }
 
-func (m *GetConfigReply) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.MissSendLength); err != nil {
-		return err
-	}
-	return nil
+func (m *GetConfigReply) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type SetConfig struct {
@@ -95,15 +70,8 @@ type SetConfig struct {
 	MissSendLength uint16
 }
 
-func (m *SetConfig) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.MissSendLength); err != nil {
-		return err
-	}
-	return nil
+func (m *SetConfig) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type ConfigFlag uint16
@@ -122,36 +90,16 @@ type FlowMod struct {
 	Actions     []Action
 }
 
-func (m *FlowMod) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Match); err != nil {
+func (m *FlowMod) UnmarshalBinary(data []byte) error {
+	reader := bytes.NewReader(data)
+	fields := []interface{}{
+		&m.Header, &m.Match, &m.Cookie, &m.Command, &m.IdleTimeout, &m.HardTimeout,
+		&m.Priority, &m.BufferId, &m.OutPort, &m.Flags,
+	}
+	if err := unmarshalFields(reader, fields...); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Cookie); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Command); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.IdleTimeout); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.HardTimeout); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Priority); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.BufferId); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.OutPort); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
-		return err
-	}
-	m.Actions = readActions(buf)
+	m.Actions = readActions(reader, reader.Len())
 	return nil
 }
 
@@ -170,27 +118,8 @@ type PortMod struct {
 	pad             [4]uint8
 }
 
-func (m *PortMod) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.PortNumber); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.HardwareAddress); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Config); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Mask); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Advertise); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
-		return err
-	}
-	return nil
+func (m *PortMod) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type QueueGetConfigRequest struct {
@@ -199,15 +128,8 @@ type QueueGetConfigRequest struct {
 	pad  [2]uint8
 }
 
-func (m *QueueGetConfigRequest) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Port); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
-		return err
-	}
-	return nil
+func (m *QueueGetConfigRequest) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type QueueGetConfigReply struct {
@@ -217,15 +139,12 @@ type QueueGetConfigReply struct {
 	Queues []PacketQueue
 }
 
-func (m *QueueGetConfigReply) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Port); err != nil {
+func (m *QueueGetConfigReply) UnmarshalBinary(data []byte) error {
+	reader := bytes.NewReader(data)
+	if err := unmarshalFields(reader, &m.Header, &m.Port, &m.pad); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
-		return err
-	}
-	m.Queues = readPacketQueues(buf)
+	m.Queues = readPacketQueues(reader)
 	return nil
 }
 
@@ -236,15 +155,13 @@ type StatsRequest struct {
 	Body  []uint8
 }
 
-func (m *StatsRequest) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Type); err != nil {
+func (m *StatsRequest) UnmarshalBinary(data []byte) error {
+	reader := bytes.NewReader(data)
+	fields := []interface{}{&m.Header, &m.Type, &m.Flags}
+	if err := unmarshalFields(reader, fields...); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
-		return err
-	}
-	m.Body = buf.Bytes()
+	m.Body = data[len(data)-reader.Len():]
 	return nil
 }
 
@@ -255,15 +172,13 @@ type StatsReply struct {
 	Body  []uint8
 }
 
-func (m *StatsReply) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Type); err != nil {
+func (m *StatsReply) UnmarshalBinary(data []byte) error {
+	reader := bytes.NewReader(data)
+	fields := []interface{}{&m.Header, &m.Type, &m.Flags}
+	if err := unmarshalFields(reader, fields...); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Flags); err != nil {
-		return err
-	}
-	m.Body = buf.Bytes()
+	m.Body = data[len(data)-reader.Len():]
 	return nil
 }
 
@@ -372,27 +287,13 @@ type PacketOut struct {
 	Data          []uint8
 }
 
-func (m *PacketOut) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.BufferId); err != nil {
+func (m *PacketOut) UnmarshalBinary(data []byte) error {
+	reader := bytes.NewReader(data)
+	fields := []interface{}{&m.Header, &m.BufferId, &m.InPort, &m.ActionsLength}
+	if err := unmarshalFields(reader, fields...); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.InPort); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.ActionsLength); err != nil {
-		return err
-	}
-	actionBytes := make([]byte, m.ActionsLength)
-	if _, err := io.ReadFull(buf, actionBytes); err != nil {
-		return err
-	}
-	m.Actions = readActions(bytes.NewBuffer(actionBytes))
-	dataBytes := make([]byte, len(body)-4-2-2-int(m.ActionsLength))
-	if _, err := io.ReadFull(buf, dataBytes); err != nil {
-		return err
-	}
-	m.Data = dataBytes
+	m.Actions = readActions(reader, int(m.ActionsLength))
 	return nil
 }
 
@@ -400,16 +301,16 @@ type BarrierRequest struct {
 	Header
 }
 
-func (m *BarrierRequest) FillBody(body []byte) error {
-	return nil
+func (m *BarrierRequest) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type BarrierReply struct {
 	Header
 }
 
-func (m *BarrierReply) FillBody(body []byte) error {
-	return nil
+func (m *BarrierReply) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type PacketIn struct {
@@ -422,24 +323,14 @@ type PacketIn struct {
 	Data        []uint8
 }
 
-func (m *PacketIn) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.BufferId); err != nil {
+func (m *PacketIn) UnmarshalBinary(data []byte) error {
+	fields := []interface{}{&m.Header, &m.BufferId, &m.TotalLength, &m.InPort, &m.Reason, &m.pad}
+	reader := bytes.NewReader(data)
+	if err := unmarshalFields(reader, fields...); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.TotalLength); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.InPort); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Reason); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
-		return err
-	}
-	m.Data = buf.Bytes()
+	read := len(data) - reader.Len()
+	m.Data = data[read:]
 	return nil
 }
 
@@ -451,51 +342,17 @@ type FlowRemoved struct {
 	Cookie          Cookie
 	Priority        uint16
 	Reason          FlowRemovedReason
-	pad             [1]uint8
+	_               [1]uint8
 	DurationSec     uint32
 	DurationNanoSec uint32
 	IdleTimeout     uint16
-	pad2            [2]uint8
+	_               [2]uint8
 	PacketCount     uint64
 	ByteCount       uint64
 }
 
-func (m *FlowRemoved) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Match); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Cookie); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Priority); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Reason); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.DurationSec); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.DurationNanoSec); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.IdleTimeout); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad2); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.PacketCount); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.ByteCount); err != nil {
-		return err
-	}
-	return nil
+func (m *FlowRemoved) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type FlowRemovedReason uint8
@@ -503,22 +360,12 @@ type FlowRemovedReason uint8
 type PortStatus struct {
 	Header
 	Reason      PortStatusReason
-	pad         [7]uint8
+	_           [7]uint8
 	Description PhysicalPort
 }
 
-func (m *PortStatus) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Reason); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.pad); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Description); err != nil {
-		return err
-	}
-	return nil
+func (m *PortStatus) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type PortStatusReason uint8
@@ -530,15 +377,12 @@ type ErrorMessage struct {
 	Data []uint8
 }
 
-func (m *ErrorMessage) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	if err := binary.Read(buf, binary.BigEndian, &m.Type); err != nil {
+func (m *ErrorMessage) UnmarshalBinary(data []byte) error {
+	if err := unmarshalFields(bytes.NewReader(data), &m.Header, &m.Type); err != nil {
 		return err
 	}
-	if err := binary.Read(buf, binary.BigEndian, &m.Code); err != nil {
-		return err
-	}
-	m.Data = buf.Bytes()
+	const fixedLength = HeaderLength + 4
+	m.Data = data[fixedLength:]
 	return nil
 }
 
@@ -558,8 +402,8 @@ type Hello struct {
 	Header
 }
 
-func (m *Hello) FillBody(body []byte) error {
-	return nil
+func (m *Hello) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type EchoRequest struct {
@@ -567,8 +411,12 @@ type EchoRequest struct {
 	Body []uint8
 }
 
-func (m *EchoRequest) FillBody(body []byte) error {
-	m.Body = body
+func (m *EchoRequest) UnmarshalBinary(data []byte) error {
+	if err := unmarshalFields(bytes.NewReader(data), &m.Header); err != nil {
+		return err
+	}
+	const fixedLength = HeaderLength
+	m.Body = data[fixedLength:]
 	return nil
 }
 
@@ -577,8 +425,12 @@ type EchoReply struct {
 	Body []uint8
 }
 
-func (m *EchoReply) FillBody(body []byte) error {
-	m.Body = body
+func (m *EchoReply) UnmarshalBinary(data []byte) error {
+	if err := unmarshalFields(bytes.NewReader(data), &m.Header); err != nil {
+		return err
+	}
+	const fixedLength = HeaderLength
+	m.Body = data[fixedLength:]
 	return nil
 }
 
@@ -588,12 +440,11 @@ type VendorMessage struct {
 	Body   []uint8
 }
 
-func (m *VendorMessage) FillBody(body []byte) error {
-	buf := bytes.NewBuffer(body)
-	err := binary.Read(buf, binary.BigEndian, &m.Vendor)
-	if err != nil {
+func (m *VendorMessage) UnmarshalBinary(data []byte) error {
+	if err := unmarshalFields(bytes.NewBuffer(data), &m.Header, &m.Vendor); err != nil {
 		return err
 	}
-	m.Body = buf.Bytes()
+	const fixedLength = HeaderLength + 4
+	m.Body = data[fixedLength:]
 	return nil
 }

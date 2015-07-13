@@ -19,7 +19,7 @@ type PacketQueue struct {
 	Properties []QueueProperty
 }
 
-func readPacketQueues(buf *bytes.Buffer) []PacketQueue {
+func readPacketQueues(buf *bytes.Reader) []PacketQueue {
 	queues := make([]PacketQueue, 0, 8)
 	remain := buf.Len()
 	for remain != 0 {
@@ -33,7 +33,7 @@ func readPacketQueues(buf *bytes.Buffer) []PacketQueue {
 	return queues
 }
 
-func readPacketQueue(buf *bytes.Buffer) (*PacketQueue, error) {
+func readPacketQueue(buf *bytes.Reader) (*PacketQueue, error) {
 	var queue PacketQueue
 	if err := binary.Read(buf, binary.BigEndian, &queue.QueueId); err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ type QueueProperty interface {
 
 const queuePropertyHeaderLength = 8
 
-func readQueueProperty(buf *bytes.Buffer) (QueueProperty, error) {
+func readQueueProperty(buf *bytes.Reader) (QueueProperty, error) {
 	var header QueuePropertyHeader
 	if err := binary.Read(buf, binary.BigEndian, &header); err != nil {
 		return nil, err
@@ -90,7 +90,7 @@ func newQueueProperty(h *QueuePropertyHeader) QueueProperty {
 	}
 }
 
-func readQueueProperties(buf *bytes.Buffer) []QueueProperty {
+func readQueueProperties(buf *bytes.Reader) []QueueProperty {
 	properties := make([]QueueProperty, 0, 8)
 	remain := buf.Len()
 	for remain != 0 {

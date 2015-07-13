@@ -1,6 +1,9 @@
 package of10
 
-import "io"
+import (
+	"encoding"
+	"io"
+)
 
 const HeaderLength = 8
 
@@ -10,8 +13,8 @@ type Packetizable interface {
 }
 
 type Message interface {
+	encoding.BinaryUnmarshaler
 	GetHeader() *Header
-	FillBody(bytes []byte) error
 }
 
 type Header struct {

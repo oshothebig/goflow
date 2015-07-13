@@ -2,6 +2,7 @@ package of10
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/binary"
 	"errors"
 	"io"
@@ -11,79 +12,97 @@ var (
 	errUnsupportedMessage error = errors.New("Unsupported message type")
 )
 
-func readMessage(reader *bufio.Reader) (Message, error) {
-	headerBytes := make([]byte, HeaderLength)
-	if _, err := io.ReadFull(reader, headerBytes); err != nil {
-		return nil, err
-	}
-
-	var header Header
-	if err := binary.Read(reader, binary.BigEndian, header); err != nil {
-		return nil, err
-	}
-
-	msg := newMessage(&header)
-	if msg == nil {
-		return nil, errUnsupportedMessage
-	}
-
-	body := make([]byte, header.Length-HeaderLength)
-	if _, err := io.ReadFull(reader, body); err != nil {
-		return nil, err
-	}
-	if err := msg.FillBody(body); err != nil {
-		return nil, err
-	}
-
-	return msg, nil
+type Decoder struct {
+	rd *bufio.Reader
 }
 
-func newMessage(h *Header) Message {
-	switch h.Type {
+func NewDecoder(rd io.Reader) *Decoder {
+	return &Decoder{bufio.NewReader(rd)}
+}
+
+func (d *Decoder) header() (*Header, error) {
+	headerBytes, err := d.rd.Peek(HeaderLength)
+	if err != nil {
+		return nil, err
+	}
+
+	buf := bytes.NewReader(headerBytes)
+	var header Header
+	if err := binary.Read(buf, binary.BigEndian, &header); err != nil {
+		return nil, err
+	}
+	return &header, nil
+}
+
+func (d *Decoder) Decode() (Message, error) {
+	header, err := d.header()
+	if err != nil {
+		return nil, err
+	}
+
+	message := emptyMessage(header.Type)
+	if message == nil {
+		return nil, errors.New("Unsupported message type")
+	}
+
+	data := make([]byte, header.Length)
+	if _, err := io.ReadFull(d.rd, data); err != nil {
+		return nil, err
+	}
+
+	if err := message.UnmarshalBinary(data); err != nil {
+		return nil, err
+	}
+
+	return message, nil
+}
+
+func emptyMessage(t MessageType) Message {
+	switch t {
 	case MessageTypes.Hello:
-		return &Hello{Header: *h}
+		return new(Hello)
 	case MessageTypes.Error:
-		return &ErrorMessage{Header: *h}
+		return new(ErrorMessage)
 	case MessageTypes.EchoRequest:
-		return &EchoRequest{Header: *h}
+		return new(EchoRequest)
 	case MessageTypes.EchoReply:
-		return &EchoReply{Header: *h}
+		return new(EchoReply)
 	case MessageTypes.Vendor:
-		return &VendorMessage{Header: *h}
+		return new(VendorMessage)
 	case MessageTypes.FeaturesRequest:
-		return &FeaturesRequest{Header: *h}
+		return new(FeaturesRequest)
 	case MessageTypes.FeaturesReply:
-		return &FeaturesReply{Header: *h}
+		return new(FeaturesReply)
 	case MessageTypes.GetConfigRequest:
-		return &GetConfigRequest{Header: *h}
+		return new(GetConfigRequest)
 	case MessageTypes.GetConfigReply:
-		return &GetConfigReply{Header: *h}
+		return new(GetConfigReply)
 	case MessageTypes.SetConfig:
-		return &SetConfig{Header: *h}
+		return new(SetConfig)
 	case MessageTypes.PacketIn:
-		return &PacketIn{Header: *h}
+		return new(PacketIn)
 	case MessageTypes.FlowRemoved:
-		return &FlowRemoved{Header: *h}
+		return new(FlowRemoved)
 	case MessageTypes.PortStatus:
-		return &PortStatus{Header: *h}
+		return new(PortStatus)
 	case MessageTypes.PacketOut:
-		return &PacketOut{Header: *h}
+		return new(PacketOut)
 	case MessageTypes.FlowMod:
-		return &FlowMod{Header: *h}
+		return new(FlowMod)
 	case MessageTypes.PortMod:
-		return &PortMod{Header: *h}
+		return new(PortMod)
 	case MessageTypes.StatsRequest:
-		return &StatsRequest{Header: *h}
+		return new(StatsRequest)
 	case MessageTypes.StatsReply:
-		return &StatsReply{Header: *h}
+		return new(StatsReply)
 	case MessageTypes.BarrierRequest:
-		return &BarrierRequest{Header: *h}
+		return new(BarrierRequest)
 	case MessageTypes.BarrierReply:
-		return &BarrierReply{Header: *h}
+		return new(BarrierReply)
 	case MessageTypes.QueueGetConfigRequest:
-		return &QueueGetConfigRequest{Header: *h}
+		return new(QueueGetConfigRequest)
 	case MessageTypes.QueueGetConfigReply:
-		return &QueueGetConfigReply{Header: *h}
+		return new(QueueGetConfigReply)
 	default:
 		return nil
 	}
