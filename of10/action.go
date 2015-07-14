@@ -24,9 +24,9 @@ type actionDecoder struct {
 	end int
 }
 
-func readActions(buf *bytes.Reader, length int) []Action {
+func readActions(rd *bytes.Reader, length int) []Action {
 	actions := make([]Action, 0, 8)
-	decoder := &actionDecoder{buf, buf.Len() - length}
+	decoder := &actionDecoder{rd, rd.Len() - length}
 	for decoder.canDecode() {
 		action, err := decoder.decode()
 		if err != nil {
