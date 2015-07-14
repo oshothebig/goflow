@@ -34,9 +34,6 @@ func readActions(rd *bytes.Reader, length int) []Action {
 			break
 		}
 		actions = append(actions, action)
-		if !decoder.canDecode() {
-			break
-		}
 	}
 	return actions
 }
