@@ -22,13 +22,13 @@ type FeaturesReply struct {
 }
 
 func (m *FeaturesReply) UnmarshalBinary(data []byte) error {
-	size := len(data)
-	fields := []interface{}{&m.Header, &m.DatapathId, &m.Buffers, &m.Tables, &m.pad, &m.Capabilities, &m.Actions}
 	reader := bytes.NewReader(data)
-	if err := unmarshalFields(reader, fields...); err != nil {
+	if err := unmarshalFields(reader, &m.Header, &m.DatapathId, &m.Buffers, &m.Tables,
+		&m.pad, &m.Capabilities, &m.Actions); err != nil {
+
 		return err
 	}
-	read := size - reader.Len()
+	read := len(data) - reader.Len()
 	ports, err := readPhysicalPort(data[read:])
 	if err != nil {
 		return err
@@ -92,11 +92,10 @@ type FlowMod struct {
 
 func (m *FlowMod) UnmarshalBinary(data []byte) error {
 	reader := bytes.NewReader(data)
-	fields := []interface{}{
-		&m.Header, &m.Match, &m.Cookie, &m.Command, &m.IdleTimeout, &m.HardTimeout,
-		&m.Priority, &m.BufferId, &m.OutPort, &m.Flags,
-	}
-	if err := unmarshalFields(reader, fields...); err != nil {
+	if err := unmarshalFields(reader, &m.Header, &m.Match, &m.Cookie,
+		&m.Command, &m.IdleTimeout, &m.HardTimeout, &m.Priority,
+		&m.BufferId, &m.OutPort, &m.Flags); err != nil {
+
 		return err
 	}
 	m.Actions = readActions(reader, reader.Len())
@@ -157,8 +156,7 @@ type StatsRequest struct {
 
 func (m *StatsRequest) UnmarshalBinary(data []byte) error {
 	reader := bytes.NewReader(data)
-	fields := []interface{}{&m.Header, &m.Type, &m.Flags}
-	if err := unmarshalFields(reader, fields...); err != nil {
+	if err := unmarshalFields(reader, &m.Header, &m.Type, &m.Flags); err != nil {
 		return err
 	}
 	m.Body = data[len(data)-reader.Len():]
@@ -174,8 +172,7 @@ type StatsReply struct {
 
 func (m *StatsReply) UnmarshalBinary(data []byte) error {
 	reader := bytes.NewReader(data)
-	fields := []interface{}{&m.Header, &m.Type, &m.Flags}
-	if err := unmarshalFields(reader, fields...); err != nil {
+	if err := unmarshalFields(reader, &m.Header, &m.Type, &m.Flags); err != nil {
 		return err
 	}
 	m.Body = data[len(data)-reader.Len():]
@@ -289,8 +286,9 @@ type PacketOut struct {
 
 func (m *PacketOut) UnmarshalBinary(data []byte) error {
 	reader := bytes.NewReader(data)
-	fields := []interface{}{&m.Header, &m.BufferId, &m.InPort, &m.ActionsLength}
-	if err := unmarshalFields(reader, fields...); err != nil {
+	if err := unmarshalFields(reader, &m.Header, &m.BufferId,
+		&m.InPort, &m.ActionsLength); err != nil {
+
 		return err
 	}
 	m.Actions = readActions(reader, int(m.ActionsLength))
@@ -324,9 +322,10 @@ type PacketIn struct {
 }
 
 func (m *PacketIn) UnmarshalBinary(data []byte) error {
-	fields := []interface{}{&m.Header, &m.BufferId, &m.TotalLength, &m.InPort, &m.Reason, &m.pad}
 	reader := bytes.NewReader(data)
-	if err := unmarshalFields(reader, fields...); err != nil {
+	if err := unmarshalFields(reader, &m.Header, &m.BufferId, &m.TotalLength,
+		&m.InPort, &m.Reason, &m.pad); err != nil {
+
 		return err
 	}
 	read := len(data) - reader.Len()
