@@ -28,7 +28,7 @@ type actionDecoder struct {
 func readActions(rd *bytes.Reader, length int) []Action {
 	actions := make([]Action, 0, 8)
 	decoder := &actionDecoder{rd: rd, length: length}
-	for {
+	for decoder.canDecode() {
 		action, err := decoder.decode()
 		if err != nil {
 			break
@@ -42,7 +42,7 @@ func readActions(rd *bytes.Reader, length int) []Action {
 }
 
 func (d *actionDecoder) canDecode() bool {
-	return d.read >= d.length
+	return d.read < d.length
 }
 
 func (d *actionDecoder) header() (*ActionHeader, error) {
