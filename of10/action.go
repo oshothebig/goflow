@@ -20,25 +20,29 @@ type Action interface {
 }
 
 type actionDecoder struct {
-	rd  *bytes.Reader
-	end int
+	rd     *bytes.Reader
+	length int
+	read   int
 }
 
 func readActions(rd *bytes.Reader, length int) []Action {
 	actions := make([]Action, 0, 8)
-	decoder := &actionDecoder{rd, rd.Len() - length}
-	for decoder.canDecode() {
+	decoder := &actionDecoder{rd: rd, length: length}
+	for {
 		action, err := decoder.decode()
 		if err != nil {
 			break
 		}
 		actions = append(actions, action)
+		if !decoder.canDecode() {
+			break
+		}
 	}
 	return actions
 }
 
 func (d *actionDecoder) canDecode() bool {
-	return d.rd.Len() > d.end
+	return d.read >= d.length
 }
 
 func (d *actionDecoder) header() (*ActionHeader, error) {
@@ -70,6 +74,7 @@ func (d *actionDecoder) decode() (Action, error) {
 	if _, err := io.ReadFull(d.rd, data); err != nil {
 		return nil, err
 	}
+	d.read += len(data)
 
 	if err := action.UnmarshalBinary(data); err != nil {
 		return nil, err
