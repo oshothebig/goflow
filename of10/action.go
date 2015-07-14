@@ -2,6 +2,7 @@ package of10
 
 import (
 	"bytes"
+	"encoding"
 	"encoding/binary"
 	"errors"
 	"io"
@@ -17,41 +18,19 @@ const actionHeaderLength = 4
 
 type Action interface {
 	GetType() ActionType
-	FillBody(buf *bytes.Buffer) error
+	encoding.BinaryUnmarshaler
 }
 
-func readAction(buf *bytes.Reader) (Action, error) {
-	// read action header
-	var header ActionHeader
-	if err := binary.Read(buf, binary.BigEndian, &header); err != nil {
-		return nil, err
-	}
-
-	// make an empty action
-	action := newAction(&header)
-	if action == nil {
-		return nil, errUnsupportedAction
-	}
-
-	// read remaining body
-	body := make([]byte, header.Length-actionHeaderLength)
-	if _, err := io.ReadFull(buf, body); err != nil {
-		return nil, err
-	}
-
-	// parse action body
-	bodyBuf := bytes.NewBuffer(body)
-	if err := action.FillBody(bodyBuf); err != nil {
-		return nil, err
-	}
-	return action, nil
+type actionDecoder struct {
+	rd  *bytes.Reader
+	end int
 }
 
 func readActions(buf *bytes.Reader, length int) []Action {
 	actions := make([]Action, 0, 8)
-	end := buf.Len() - length
-	for buf.Len() > end {
-		action, err := readAction(buf)
+	decoder := &actionDecoder{buf, buf.Len() - length}
+	for decoder.canDecode() {
+		action, err := decoder.decode()
 		if err != nil {
 			break
 		}
@@ -60,34 +39,66 @@ func readActions(buf *bytes.Reader, length int) []Action {
 	return actions
 }
 
-func newAction(h *ActionHeader) Action {
-	switch h.Type {
+func (d *actionDecoder) canDecode() bool {
+	return d.rd.Len() > d.end
+}
+
+func (d *actionDecoder) decode() (Action, error) {
+	// read action header
+	start := d.rd.Len()
+	var header ActionHeader
+	if err := binary.Read(d.rd, binary.BigEndian, &header); err != nil {
+		return nil, err
+	}
+	offset := d.rd.Len() - start
+	// unread size of header
+	d.rd.Seek(int64(offset), 1)
+
+	action := newAction(header.Type)
+	if action == nil {
+		return nil, errUnsupportedAction
+	}
+
+	data := make([]byte, header.Length)
+	if _, err := io.ReadFull(d.rd, data); err != nil {
+		return nil, err
+	}
+
+	if err := action.UnmarshalBinary(data); err != nil {
+		return nil, err
+	}
+
+	return action, nil
+}
+
+func newAction(t ActionType) Action {
+	switch t {
 	case ActionTypes.Output:
-		return &SendOutPort{ActionHeader: *h}
+		return new(SendOutPort)
 	case ActionTypes.SetVlanId:
-		return &SetVlanVid{ActionHeader: *h}
+		return new(SetVlanVid)
 	case ActionTypes.SetVlanPcp:
-		return &SetVlanPcp{ActionHeader: *h}
+		return new(SetVlanPcp)
 	case ActionTypes.StripVlan:
-		return &StripVlan{ActionHeader: *h}
+		return new(StripVlan)
 	case ActionTypes.SetEtherSrc:
-		return &SetEtherSrc{ActionHeader: *h}
+		return new(SetEtherSrc)
 	case ActionTypes.SetEtherDst:
-		return &SetEtherDst{ActionHeader: *h}
+		return new(SetEtherDst)
 	case ActionTypes.SetIpSrc:
-		return &SetIpSrc{ActionHeader: *h}
+		return new(SetIpSrc)
 	case ActionTypes.SetIpDst:
-		return &SetIpDst{ActionHeader: *h}
+		return new(SetIpDst)
 	case ActionTypes.SetIpTos:
-		return &SetIpTos{ActionHeader: *h}
+		return new(SetIpTos)
 	case ActionTypes.SetNetworkSrc:
-		return &SetTransportSrc{ActionHeader: *h}
+		return new(SetTransportSrc)
 	case ActionTypes.SetNetworkDst:
-		return &SetTransportDst{ActionHeader: *h}
+		return new(SetTransportDst)
 	case ActionTypes.Enqueue:
-		return &Enqueue{ActionHeader: *h}
+		return new(Enqueue)
 	case ActionTypes.Vendor:
-		return &VendorActionHeader{ActionHeader: *h}
+		return new(VendorActionHeader)
 	default:
 		return nil
 	}
@@ -108,74 +119,47 @@ type SendOutPort struct {
 	MaxLength uint16
 }
 
-func (a *SendOutPort) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Port); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.MaxLength); err != nil {
-		return err
-	}
-	return nil
+func (m *SendOutPort) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type Enqueue struct {
 	ActionHeader
 	Port    PortNumber
-	pad     [6]uint8
+	_       [6]uint8
 	QueueId uint32
 }
 
-func (a *Enqueue) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Port); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.QueueId); err != nil {
-		return err
-	}
-	return nil
+func (m *Enqueue) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type SetVlanVid struct {
 	ActionHeader
-	Id  VlanId
-	pad [2]uint32
+	Id VlanId
+	_  [2]uint32
 }
 
-func (a *SetVlanVid) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Id); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	return nil
+func (m *SetVlanVid) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type SetVlanPcp struct {
 	ActionHeader
 	Priority VlanPriority
-	pad      [3]uint8
+	_        [3]uint8
 }
 
-func (a *SetVlanPcp) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Priority); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	return nil
+func (m *SetVlanPcp) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type StripVlan struct {
 	ActionHeader
 }
 
-func (a *StripVlan) FillBody(buf *bytes.Buffer) error {
-	return nil
+func (m *StripVlan) UnmarshalBinary(data []byte) error {
+	return unmarshalFields(bytes.NewReader(data), m)
 }
 
 type SetEtherSrc struct {
@@ -188,16 +172,6 @@ func (a *SetEtherSrc) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
 }
 
-func (a *SetEtherSrc) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Address); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	return nil
-}
-
 type SetEtherDst struct {
 	ActionHeader
 	Address [EthernetAddressLength]uint8
@@ -206,16 +180,6 @@ type SetEtherDst struct {
 
 func (a *SetEtherDst) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
-}
-
-func (a *SetEtherDst) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Address); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	return nil
 }
 
 type SetIpSrc struct {
@@ -227,13 +191,6 @@ func (a *SetIpSrc) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
 }
 
-func (a *SetIpSrc) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Address); err != nil {
-		return err
-	}
-	return nil
-}
-
 type SetIpDst struct {
 	ActionHeader
 	Address [4]uint8
@@ -241,13 +198,6 @@ type SetIpDst struct {
 
 func (a *SetIpDst) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
-}
-
-func (a *SetIpDst) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Address); err != nil {
-		return err
-	}
-	return nil
 }
 
 type SetIpTos struct {
@@ -260,16 +210,6 @@ func (a *SetIpTos) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
 }
 
-func (a *SetIpTos) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Tos); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	return nil
-}
-
 type SetTransportSrc struct {
 	ActionHeader
 	Port TransportPort
@@ -278,16 +218,6 @@ type SetTransportSrc struct {
 
 func (a *SetTransportSrc) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
-}
-
-func (a *SetTransportSrc) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Port); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	return nil
 }
 
 type SetTransportDst struct {
@@ -300,16 +230,6 @@ func (a *SetTransportDst) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
 }
 
-func (a *SetTransportDst) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Port); err != nil {
-		return err
-	}
-	if err := binary.Read(buf, binary.BigEndian, &a.pad); err != nil {
-		return err
-	}
-	return nil
-}
-
 type VendorActionHeader struct {
 	ActionHeader
 	Vendor VendorId
@@ -317,13 +237,6 @@ type VendorActionHeader struct {
 
 func (a *VendorActionHeader) UnmarshalBinary(data []byte) error {
 	return unmarshalFields(bytes.NewReader(data), a)
-}
-
-func (a *VendorActionHeader) FillBody(buf *bytes.Buffer) error {
-	if err := binary.Read(buf, binary.BigEndian, &a.Vendor); err != nil {
-		return err
-	}
-	return nil
 }
 
 type VendorId uint32
