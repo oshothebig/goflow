@@ -41,16 +41,25 @@ func (d *actionDecoder) canDecode() bool {
 	return d.rd.Len() > d.end
 }
 
-func (d *actionDecoder) decode() (Action, error) {
-	// read action header
+func (d *actionDecoder) header() (*ActionHeader, error) {
 	start := d.rd.Len()
 	var header ActionHeader
 	if err := binary.Read(d.rd, binary.BigEndian, &header); err != nil {
 		return nil, err
 	}
+
+	// unread length of header
 	offset := d.rd.Len() - start
-	// unread size of header
 	d.rd.Seek(int64(offset), 1)
+
+	return &header, nil
+}
+
+func (d *actionDecoder) decode() (Action, error) {
+	header, err := d.header()
+	if err != nil {
+		return nil, err
+	}
 
 	action := newAction(header.Type)
 	if action == nil {
