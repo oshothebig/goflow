@@ -14,8 +14,6 @@ var (
 
 type ActionType uint16
 
-const actionHeaderLength = 4
-
 type Action interface {
 	GetType() ActionType
 	encoding.BinaryUnmarshaler
