@@ -177,7 +177,7 @@ func (m *StripVlan) UnmarshalBinary(data []byte) error {
 type SetEtherSrc struct {
 	ActionHeader
 	Address [EthernetAddressLength]uint8
-	pad     [6]uint8
+	_       [6]uint8
 }
 
 func (a *SetEtherSrc) UnmarshalBinary(data []byte) error {
@@ -187,7 +187,7 @@ func (a *SetEtherSrc) UnmarshalBinary(data []byte) error {
 type SetEtherDst struct {
 	ActionHeader
 	Address [EthernetAddressLength]uint8
-	pad     [6]uint8
+	_       [6]uint8
 }
 
 func (a *SetEtherDst) UnmarshalBinary(data []byte) error {
@@ -215,7 +215,7 @@ func (a *SetIpDst) UnmarshalBinary(data []byte) error {
 type SetIpTos struct {
 	ActionHeader
 	Tos Dscp
-	pad [3]uint8
+	_   [3]uint8
 }
 
 func (a *SetIpTos) UnmarshalBinary(data []byte) error {
@@ -225,7 +225,7 @@ func (a *SetIpTos) UnmarshalBinary(data []byte) error {
 type SetTransportSrc struct {
 	ActionHeader
 	Port TransportPort
-	pad  [2]uint8
+	_    [2]uint8
 }
 
 func (a *SetTransportSrc) UnmarshalBinary(data []byte) error {
@@ -235,7 +235,7 @@ func (a *SetTransportSrc) UnmarshalBinary(data []byte) error {
 type SetTransportDst struct {
 	ActionHeader
 	Port TransportPort
-	pad  [2]uint8
+	_    [2]uint8
 }
 
 func (a *SetTransportDst) UnmarshalBinary(data []byte) error {
